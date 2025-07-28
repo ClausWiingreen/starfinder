@@ -2,8 +2,11 @@ package dk.wiingreen.starfinder;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/characters")
@@ -28,5 +31,10 @@ public class CharacterController {
             model.addAttribute("error", "You must be logged in to create a character.");
             return "error/unauthorized";
         });
+    }
+
+    @PostMapping("/{id}")
+    public String updateCharacter(@PathVariable UUID id) {
+        return "redirect:/characters";
     }
 }
