@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class CharacterIntegrationTests {
+class CharacterIntegrationTests {
     private final UserRepository userRepository;
     private final MockMvc mockMvc;
     private final CharacterRepository characterRepository;
@@ -107,4 +107,16 @@ public class CharacterIntegrationTests {
                 });
     }
 
+    @Test
+    @WithMockUser("testuser")
+    void characterFormRejectsEmptyName() throws Exception {
+        var user = new User();
+        user.setUsername("testuser");
+        user = userRepository.save(user);
+
+        mockMvc.perform(post("/characters")
+                        .param("name", "")
+                        .with(csrf()))
+                .andExpect(status().isOk());
+    }
 }
