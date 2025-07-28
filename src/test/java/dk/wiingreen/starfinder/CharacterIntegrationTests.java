@@ -82,6 +82,9 @@ public class CharacterIntegrationTests {
     @Test
     @WithMockUser(username = "intruder")
     void userCannotEditAnotherUsersCharacter() throws Exception {
+        var intruder = new User();
+        intruder.setUsername("intruder");
+        intruder = userRepository.save(intruder);
         var owner = new User();
         owner.setUsername("owner");
         owner = userRepository.save(owner);
