@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -16,11 +17,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class CharacterIntegrationTests {
     private final UserRepository userRepository;
     private final MockMvc mockMvc;
+    private final CharacterRepository characterRepository;
 
     @Autowired
-    public CharacterIntegrationTests(UserRepository userRepository, MockMvc mockMvc) {
+    public CharacterIntegrationTests(UserRepository userRepository, MockMvc mockMvc, CharacterRepository characterRepository) {
         this.userRepository = userRepository;
         this.mockMvc = mockMvc;
+        this.characterRepository = characterRepository;
     }
 
     @Test
@@ -32,5 +35,9 @@ public class CharacterIntegrationTests {
         mockMvc.perform(post("/characters")
                         .param("name", "Nova Vance"))
                 .andExpect(status().is3xxRedirection());
+
+        var characters = characterRepository.findAll();
+
+        assertThat(characters).hasSize(1);
     }
 }
