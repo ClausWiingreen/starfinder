@@ -97,7 +97,7 @@ public class CharacterIntegrationTests {
         mockMvc.perform(post("/characters/{id}", character.getId())
                         .param("name", "Hacked Name")
                         .with(csrf()))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is2xxSuccessful());
 
         assertThat(characterRepository.findById(character.getId()))
                 .hasValueSatisfying(storedCharacter -> {
