@@ -11,12 +11,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class CharacterIntegrationTests {
+class CharacterIntegrationTests {
     private final UserRepository userRepository;
     private final MockMvc mockMvc;
     private final CharacterRepository characterRepository;
@@ -107,4 +109,20 @@ public class CharacterIntegrationTests {
                 });
     }
 
+    @Test
+    @WithMockUser("testuser")
+    void characterFormRejectsEmptyName() throws Exception {
+        var user = new User();
+        user.setUsername("testuser");
+        user = userRepository.save(user);
+
+        mockMvc.perform(post("/characters")
+                        .param("name", "")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeHasFieldErrors("characterCreateRequest", "name"))
+                .andExpect(view().name("/characters/form"));
+
+        assertThat(characterRepository.count()).isZero();
+    }
 }
