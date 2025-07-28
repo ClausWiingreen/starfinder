@@ -69,4 +69,12 @@ public class CharacterIntegrationTests {
         assertThat(updated).hasValueSatisfying(ch ->
                 assertThat(ch).extracting("name").isEqualTo("New Name"));
     }
+
+    @Test
+    void unauthenticatedUserCannotSubmitCharacterForm() throws Exception {
+        mockMvc.perform(post("/characters")
+                        .param("name", "Hacker Mouse")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection());
+    }
 }
