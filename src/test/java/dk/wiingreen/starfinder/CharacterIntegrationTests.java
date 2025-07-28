@@ -5,9 +5,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -27,19 +29,21 @@ public class CharacterIntegrationTests {
     }
 
     @Test
+    @WithMockUser("testuser")
     void characterIsSavedForLoggedInUserWhenFormIsSubmitted() throws Exception {
         var user = new User();
         user.setUsername("testuser");
         userRepository.save(user);
 
         mockMvc.perform(post("/characters")
-                        .param("name", "Nova Vance"))
+                        .param("name", "Nova Vance")
+                        .with(csrf()))
                 .andExpect(status().is3xxRedirection());
 
         var characters = characterRepository.findAll();
 
         assertThat(characters).singleElement()
-                .extracting("name")
-                .isEqualTo("Nova Vance");
+                .extracting("name", "owner.username")
+                .containsExactly("Nova Vance", "testuser");
     }
 }
