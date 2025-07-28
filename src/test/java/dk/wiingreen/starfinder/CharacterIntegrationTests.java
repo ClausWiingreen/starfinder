@@ -63,5 +63,10 @@ public class CharacterIntegrationTests {
                         .param("name", "New Name")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection());
+
+        var updated = characterRepository.findById(character.getId());
+
+        assertThat(updated).hasValueSatisfying(ch ->
+                assertThat(ch).extracting("name").isEqualTo("New Name"));
     }
 }
