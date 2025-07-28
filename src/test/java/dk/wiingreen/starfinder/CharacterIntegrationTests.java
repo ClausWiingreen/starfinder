@@ -142,7 +142,9 @@ class CharacterIntegrationTests {
         characterRepository.save(user2.createCharacter("Gamma"));
 
         mockMvc.perform(get("/characters"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(view().name("/characters/overview"))
+                .andExpect(model().attributeExists("characters"));
     }
 
     private User setupUser(String username) {
