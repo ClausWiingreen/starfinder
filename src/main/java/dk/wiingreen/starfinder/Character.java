@@ -24,4 +24,8 @@ public class Character {
     public void setOwner(User owner) {
         this.owner = owner;
     }
+
+    public UUID getId() {
+        return id;
+    }
 }
