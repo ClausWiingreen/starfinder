@@ -59,7 +59,7 @@ public class CharacterIntegrationTests {
         character.setOwner(user);
         character = characterRepository.save(character);
 
-        mockMvc.perform(post("/characters/%s".formatted(character.getId()))
+        mockMvc.perform(post("/characters/{id}", character.getId())
                         .param("name", "New Name")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection());
@@ -67,7 +67,8 @@ public class CharacterIntegrationTests {
         var updated = characterRepository.findById(character.getId());
 
         assertThat(updated).hasValueSatisfying(ch ->
-                assertThat(ch).extracting("name").isEqualTo("New Name"));
+                assertThat(ch).extracting("name")
+                        .isEqualTo("New Name"));
     }
 
     @Test
@@ -77,4 +78,30 @@ public class CharacterIntegrationTests {
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection());
     }
+
+    @Test
+    @WithMockUser(username = "intruder")
+    void userCannotEditAnotherUsersCharacter() throws Exception {
+        var owner = new User();
+        owner.setUsername("owner");
+        owner = userRepository.save(owner);
+
+        var character = new Character();
+        character.setName("Original Name");
+        character.setOwner(owner);
+        character = characterRepository.save(character);
+
+        mockMvc.perform(post("/characters/{id}", character.getId())
+                        .param("name", "Hacked Name")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection());
+
+        assertThat(characterRepository.findById(character.getId()))
+                .hasValueSatisfying(storedCharacter -> {
+                    assertThat(storedCharacter)
+                            .extracting("name")
+                            .isEqualTo("Original Name");
+                });
+    }
+
 }
