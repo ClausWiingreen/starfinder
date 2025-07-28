@@ -29,7 +29,7 @@ class CharacterController {
             return "redirect:/characters";
         }).orElseGet(() -> {
             model.addAttribute("error", "You must be logged in to create a character.");
-            return "error/unauthorized";
+            return "/error/unauthorized";
         });
     }
 
