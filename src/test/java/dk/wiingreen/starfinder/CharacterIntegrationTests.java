@@ -38,6 +38,8 @@ public class CharacterIntegrationTests {
 
         var characters = characterRepository.findAll();
 
-        assertThat(characters).hasSize(1);
+        assertThat(characters).singleElement()
+                .extracting("name")
+                .isEqualTo("Nova Vance");
     }
 }

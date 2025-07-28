@@ -12,4 +12,5 @@ public class Character {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    private String name;
 }
