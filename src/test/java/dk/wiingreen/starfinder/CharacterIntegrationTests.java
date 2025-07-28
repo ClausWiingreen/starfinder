@@ -46,4 +46,27 @@ public class CharacterIntegrationTests {
                 .extracting("name", "owner.username")
                 .containsExactly("Nova Vance", "testuser");
     }
+
+    @Test
+    @WithMockUser("testuser")
+    void characterNameIsUpdatedWhenEditFormIsSubmitted() throws Exception {
+        var user = new User();
+        user.setUsername("testuser");
+        user = userRepository.save(user);
+
+        var character = new Character();
+        character.setName("Old Name");
+        character.setOwner(user);
+        character = characterRepository.save(character);
+
+        mockMvc.perform(post("/characters/%s".formatted(character.getId()))
+                        .param("name", "New Name")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection());
+
+        var updated = characterRepository.findById(character.getId());
+
+        assertThat(updated).hasValueSatisfying(ch ->
+                assertThat(ch).extracting("name").isEqualTo("New Name"));
+    }
 }
