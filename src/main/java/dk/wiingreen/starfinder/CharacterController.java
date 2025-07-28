@@ -14,8 +14,10 @@ public class CharacterController {
     }
 
     @PostMapping
-    public String addCharacter() {
-        characterRepository.save(new Character());
+    public String addCharacter(String name) {
+        var character = new Character();
+        character.setName(name);
+        characterRepository.save(character);
         return "redirect:/characters";
     }
 }

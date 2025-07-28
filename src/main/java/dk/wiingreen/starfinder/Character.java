@@ -13,4 +13,8 @@ public class Character {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
