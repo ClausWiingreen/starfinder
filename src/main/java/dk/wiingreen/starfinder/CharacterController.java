@@ -34,7 +34,14 @@ public class CharacterController {
     }
 
     @PostMapping("/{id}")
-    public String updateCharacter(@PathVariable UUID id) {
-        return "redirect:/characters";
+    public String updateCharacter(@PathVariable UUID id, String name, Model model) {
+        return characterRepository.findById(id).map(character -> {
+            character.setName(name);
+            characterRepository.save(character);
+            return "redirect:/characters";
+        }).orElseGet(() -> {
+            model.addAttribute("error", "Failed to find character with id %s".formatted(id));
+            return "error/not-found";
+        });
     }
 }
