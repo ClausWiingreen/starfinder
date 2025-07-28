@@ -24,7 +24,8 @@ class CharacterController {
     }
 
     @GetMapping
-    String getCharacterOverview() {
+    String getCharacterOverview(Model model) {
+        model.addAttribute("characters", characterRepository.findAll());
         return "/characters/overview";
     }
 
