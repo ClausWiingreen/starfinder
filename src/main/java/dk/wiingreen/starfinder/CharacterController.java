@@ -7,8 +7,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/characters")
 public class CharacterController {
+    private final CharacterRepository characterRepository;
+
+    public CharacterController(CharacterRepository characterRepository) {
+        this.characterRepository = characterRepository;
+    }
+
     @PostMapping
     public String addCharacter() {
+        characterRepository.save(new Character());
         return "redirect:/characters";
     }
 }
