@@ -10,17 +10,17 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping("/characters")
-public class CharacterController {
+class CharacterController {
     private final CharacterRepository characterRepository;
     private final CurrentUserService currentUserService;
 
-    public CharacterController(CharacterRepository characterRepository, CurrentUserService currentUserService) {
+    CharacterController(CharacterRepository characterRepository, CurrentUserService currentUserService) {
         this.characterRepository = characterRepository;
         this.currentUserService = currentUserService;
     }
 
     @PostMapping
-    public String addCharacter(String name, Model model) {
+    String addCharacter(String name, Model model) {
         return currentUserService.getCurrentUser().map(user -> {
             var character = new Character();
             character.setName(name);
@@ -34,8 +34,7 @@ public class CharacterController {
     }
 
     @PostMapping("/{id}")
-    public String updateCharacter(@PathVariable UUID id, String name, Model model) {
-        return characterRepository.findById(id).map(character -> {
+    String updateCharacter(@PathVariable UUID id, String name, Model model) {
         return currentUserService.getCurrentUser().map(user -> characterRepository.findById(id).map(character -> {
             character.setName(name);
             characterRepository.save(character);
