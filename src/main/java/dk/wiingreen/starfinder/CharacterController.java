@@ -20,15 +20,22 @@ class CharacterController {
     }
 
     @PostMapping
-    String addCharacter(String name, Model model) {
+    String addCharacter(@Valid @ModelAttribute CharacterCreateRequest request,
+                        BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            return "/characters/form";
+        }
+
         return currentUserService.getCurrentUser().map(user -> {
             var character = new Character();
-            character.setName(name);
+            character.setName(request.name());
             character.setOwner(user);
             characterRepository.save(character);
             return "redirect:/characters";
         }).orElseGet(() -> {
-            model.addAttribute("error", "You must be logged in to create a character.");
+            model.addAttribute(
+                    "error",
+                    "You must be logged in to create a character.");
             return "/error/unauthorized";
         });
     }
