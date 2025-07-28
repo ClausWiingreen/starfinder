@@ -120,7 +120,15 @@ class CharacterIntegrationTests {
         mockMvc.perform(post("/characters/{id}", character.getId())
                         .param("name", "")
                         .with(csrf()))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(model().attributeHasFieldErrors("characterEditRequest", "name"))
+                .andExpect(view().name("/characters/edit"));
+
+        assertThat(characterRepository.findById(character.getId()))
+                .hasValueSatisfying(storedCharacter ->
+                        assertThat(storedCharacter)
+                                .extracting("name")
+                                .isEqualTo("Valid Name"));
     }
 
     private User setupUser(String username) {
