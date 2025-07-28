@@ -33,9 +33,7 @@ class CharacterIntegrationTests {
     @Test
     @WithMockUser("testuser")
     void characterIsSavedForLoggedInUserWhenFormIsSubmitted() throws Exception {
-        var user = new User();
-        user.setUsername("testuser");
-        userRepository.save(user);
+        setupUser("testuser");
 
         mockMvc.perform(post("/characters")
                         .param("name", "Nova Vance")
@@ -52,14 +50,9 @@ class CharacterIntegrationTests {
     @Test
     @WithMockUser("testuser")
     void characterNameIsUpdatedWhenEditFormIsSubmitted() throws Exception {
-        var user = new User();
-        user.setUsername("testuser");
-        user = userRepository.save(user);
-
-        var character = new Character();
-        character.setName("Old Name");
-        character.setOwner(user);
-        character = characterRepository.save(character);
+        var user = setupUser("testuser");
+        var character = characterRepository.save(
+                user.createCharacter("Old Name"));
 
         mockMvc.perform(post("/characters/{id}", character.getId())
                         .param("name", "New Name")
@@ -84,17 +77,10 @@ class CharacterIntegrationTests {
     @Test
     @WithMockUser(username = "intruder")
     void userCannotEditAnotherUsersCharacter() throws Exception {
-        var intruder = new User();
-        intruder.setUsername("intruder");
-        intruder = userRepository.save(intruder);
-        var owner = new User();
-        owner.setUsername("owner");
-        owner = userRepository.save(owner);
-
-        var character = new Character();
-        character.setName("Original Name");
-        character.setOwner(owner);
-        character = characterRepository.save(character);
+        setupUser("intruder");
+        var owner = setupUser("owner");
+        var character = characterRepository.save(
+                owner.createCharacter("Original Name"));
 
         mockMvc.perform(post("/characters/{id}", character.getId())
                         .param("name", "Hacked Name")
@@ -112,9 +98,7 @@ class CharacterIntegrationTests {
     @Test
     @WithMockUser("testuser")
     void characterFormRejectsEmptyName() throws Exception {
-        var user = new User();
-        user.setUsername("testuser");
-        user = userRepository.save(user);
+        setupUser("testuser");
 
         mockMvc.perform(post("/characters")
                         .param("name", "")
@@ -124,5 +108,32 @@ class CharacterIntegrationTests {
                 .andExpect(view().name("/characters/form"));
 
         assertThat(characterRepository.count()).isZero();
+    }
+
+    @Test
+    @WithMockUser("testuser")
+    void editFormRejectsEmptyName() throws Exception {
+        var user = setupUser("testuser");
+        var character = characterRepository.save(
+                user.createCharacter("Valid Name"));
+
+        mockMvc.perform(post("/characters/{id}", character.getId())
+                        .param("name", "")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeHasFieldErrors("characterEditRequest", "name"))
+                .andExpect(view().name("/characters/edit"));
+
+        assertThat(characterRepository.findById(character.getId()))
+                .hasValueSatisfying(storedCharacter ->
+                        assertThat(storedCharacter)
+                                .extracting("name")
+                                .isEqualTo("Valid Name"));
+    }
+
+    private User setupUser(String username) {
+        var user = new User();
+        user.setUsername(username);
+        return userRepository.save(user);
     }
 }

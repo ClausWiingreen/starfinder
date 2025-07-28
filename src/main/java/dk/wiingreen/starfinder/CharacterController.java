@@ -1,7 +1,10 @@
 package dk.wiingreen.starfinder;
 
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,9 +30,7 @@ class CharacterController {
         }
 
         return currentUserService.getCurrentUser().map(user -> {
-            var character = new Character();
-            character.setName(request.name());
-            character.setOwner(user);
+            var character = user.createCharacter(request.name());
             characterRepository.save(character);
             return "redirect:/characters";
         }).orElseGet(() -> {
@@ -41,15 +42,24 @@ class CharacterController {
     }
 
     @PostMapping("/{id}")
-    String updateCharacter(@PathVariable UUID id, String name, Model model) {
+    String updateCharacter(@PathVariable UUID id,
+                           @Valid @ModelAttribute CharacterEditRequest request,
+                           BindingResult bindingResult,
+                           Model model) {
+        if (bindingResult.hasErrors()) {
+            return "/characters/edit";
+        }
+
         return currentUserService.getCurrentUser().map(user ->
                 characterRepository.findByIdAndOwner(id, user)
                         .map(character -> {
-                            character.setName(name);
+                            character.setName(request.name());
                             characterRepository.save(character);
                             return "redirect:/characters";
                         }).orElseGet(() -> {
-                            model.addAttribute("error", "Failed to find character with id %s".formatted(id));
+                            model.addAttribute(
+                                    "error",
+                                    "Failed to find character with id %s".formatted(id));
                             return "/error/not-found";
                         })).orElse("redirect:/login");
     }

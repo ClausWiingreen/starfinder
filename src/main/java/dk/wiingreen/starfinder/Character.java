@@ -9,7 +9,7 @@ import jakarta.persistence.ManyToOne;
 import java.util.UUID;
 
 @Entity
-public class Character {
+class Character {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -17,15 +17,15 @@ public class Character {
     @ManyToOne
     private User owner;
 
-    public void setName(String name) {
+    void setName(String name) {
         this.name = name;
     }
 
-    public void setOwner(User owner) {
+    void setOwner(User owner) {
         this.owner = owner;
     }
 
-    public UUID getId() {
+    UUID getId() {
         return id;
     }
 }
