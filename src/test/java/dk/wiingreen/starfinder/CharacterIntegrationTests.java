@@ -11,7 +11,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -117,6 +119,10 @@ class CharacterIntegrationTests {
         mockMvc.perform(post("/characters")
                         .param("name", "")
                         .with(csrf()))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(model().attributeHasFieldErrors("characterCreateRequest", "name"))
+                .andExpect(view().name("/characters/form"));
+
+        assertThat(characterRepository.count()).isZero();
     }
 }
