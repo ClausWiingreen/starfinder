@@ -75,7 +75,9 @@ class CharacterController {
 
     @PostMapping("/{id}/delete")
     String deleteCharacter(@PathVariable UUID id) {
-        characterRepository.deleteById(id);
-        return "redirect:/characters";
+        return currentUserService.getCurrentUser().map(user -> {
+            characterRepository.deleteByIdAndOwner(id, user);
+            return "redirect:/characters";
+        }).orElse("redirect:/login");
     }
 }

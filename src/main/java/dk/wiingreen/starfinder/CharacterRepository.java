@@ -9,4 +9,6 @@ interface CharacterRepository extends CrudRepository<Character, UUID> {
     Optional<Character> findByIdAndOwner(UUID id, User owner);
 
     Iterable<Character> findByOwner(User owner);
+
+    void deleteByIdAndOwner(UUID id, User owner);
 }
