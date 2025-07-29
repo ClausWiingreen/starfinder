@@ -15,6 +15,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -155,6 +156,20 @@ class CharacterIntegrationTests {
                 .extracting("name")
                 .containsExactlyInAnyOrder("Alpha", "Beta");
 
+    }
+
+    @Test
+    @WithMockUser("testuser")
+    void userCanDeleteOwnCharacter() throws Exception {
+        var user = setupUser("testuser");
+        var character = characterRepository.save(user.createCharacter("To Be Deleted"));
+
+        mockMvc.perform(post("/characters/{id}/delete", character.getId())
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/characters"));
+
+        assertThat(characterRepository.findById(character.getId())).isEmpty();
     }
 
     private User setupUser(String username) {
