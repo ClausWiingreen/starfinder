@@ -172,6 +172,22 @@ class CharacterIntegrationTests {
         assertThat(characterRepository.findById(character.getId())).isEmpty();
     }
 
+    @Test
+    @WithMockUser("notowner")
+    void userCannotDeleteOthersCharacter() throws Exception {
+        setupUser("notowner");
+        var user = setupUser("realowner");
+        var character = characterRepository.save(user.createCharacter("Protected"));
+
+        mockMvc.perform(post("/characters/{id}/delete", character.getId())
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/characters"));
+
+        assertThat(characterRepository.findById(character.getId()))
+                .hasValue(character);
+    }
+
     private User setupUser(String username) {
         var user = new User();
         user.setUsername(username);
