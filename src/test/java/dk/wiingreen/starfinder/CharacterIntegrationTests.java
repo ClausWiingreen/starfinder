@@ -10,6 +10,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -186,6 +188,17 @@ class CharacterIntegrationTests {
 
         assertThat(characterRepository.findById(character.getId()))
                 .hasValue(character);
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    void deleteRedirectsEvenIfCharacterDoesNotExist() throws Exception {
+        setupUser("testuser");
+        UUID nonExistentId = UUID.randomUUID();
+        mockMvc.perform(post("/characters/{id}/delete", nonExistentId)
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/characters"));
     }
 
     private User setupUser(String username) {
