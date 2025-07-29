@@ -151,8 +151,9 @@ class CharacterIntegrationTests {
 
         ModelAndView modelAndView = result.getModelAndView();
         assertThat(modelAndView).isNotNull()
-                .extracting("model.characters", InstanceOfAssertFactories.list(Character.class))
-                .hasSize(2);
+                .extracting("model.characters", InstanceOfAssertFactories.list(String.class))
+                .extracting("name")
+                .containsExactlyInAnyOrder("Alpha", "Beta");
 
     }
 
