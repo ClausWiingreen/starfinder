@@ -1,15 +1,18 @@
 package dk.wiingreen.starfinder;
 
 import jakarta.transaction.Transactional;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.servlet.ModelAndView;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -129,6 +132,29 @@ class CharacterIntegrationTests {
                         assertThat(storedCharacter)
                                 .extracting("name")
                                 .isEqualTo("Valid Name"));
+    }
+
+    @Test
+    @WithMockUser("testuser")
+    void charactersAreOnlyListedForCurrentUser() throws Exception {
+        var user1 = setupUser("testuser");
+        var user2 = setupUser("otheruser");
+        characterRepository.save(user1.createCharacter("Alpha"));
+        characterRepository.save(user1.createCharacter("Beta"));
+        characterRepository.save(user2.createCharacter("Gamma"));
+
+        var result = mockMvc.perform(get("/characters"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("/characters/overview"))
+                .andExpect(model().attributeExists("characters"))
+                .andReturn();
+
+        ModelAndView modelAndView = result.getModelAndView();
+        assertThat(modelAndView).isNotNull()
+                .extracting("model.characters", InstanceOfAssertFactories.list(String.class))
+                .extracting("name")
+                .containsExactlyInAnyOrder("Alpha", "Beta");
+
     }
 
     private User setupUser(String username) {
