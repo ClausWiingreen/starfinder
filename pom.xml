@@ -10,7 +10,7 @@
     </parent>
     <groupId>dk.wiingreen</groupId>
     <artifactId>starfinder</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.0</version>
     <name>starfinder</name>
     <description>starfinder</description>
     <url/>
