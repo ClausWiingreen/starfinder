@@ -1,8 +1,6 @@
 package dk.wiingreen.starfinder;
 
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -73,5 +71,10 @@ class CharacterController {
                                     "Failed to find character with id %s".formatted(id));
                             return "/error/not-found";
                         })).orElse("redirect:/login");
+    }
+
+    @PostMapping("/{id}/delete")
+    String deleteCharacter(@PathVariable UUID id) {
+        return "redirect:/characters";
     }
 }
