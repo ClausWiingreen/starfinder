@@ -75,6 +75,7 @@ class CharacterController {
 
     @PostMapping("/{id}/delete")
     String deleteCharacter(@PathVariable UUID id) {
+        characterRepository.deleteById(id);
         return "redirect:/characters";
     }
 }
