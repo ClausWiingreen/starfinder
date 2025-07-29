@@ -1,6 +1,8 @@
 package dk.wiingreen.starfinder;
 
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,8 +27,10 @@ class CharacterController {
 
     @GetMapping
     String getCharacterOverview(Model model) {
-        model.addAttribute("characters", characterRepository.findAll());
-        return "/characters/overview";
+        return currentUserService.getCurrentUser().map(user -> {
+            model.addAttribute("characters", characterRepository.findByOwner(user));
+            return "/characters/overview";
+        }).orElse("redirect:/login");
     }
 
     @PostMapping

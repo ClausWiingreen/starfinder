@@ -135,7 +135,7 @@ class CharacterIntegrationTests {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser("testuser")
     void charactersAreOnlyListedForCurrentUser() throws Exception {
         var user1 = setupUser("testuser");
         var user2 = setupUser("otheruser");
