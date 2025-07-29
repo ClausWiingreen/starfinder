@@ -166,7 +166,10 @@ class CharacterIntegrationTests {
 
         mockMvc.perform(post("/characters/{id}/delete", character.getId())
                         .with(csrf()))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/characters"));
+
+        assertThat(characterRepository.findById(character.getId())).isEmpty();
     }
 
     private User setupUser(String username) {
