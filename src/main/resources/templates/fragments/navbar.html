@@ -1,6 +1,6 @@
 <header style="background-color: var(--color-background)" th:fragment="navbar">
     <nav class="navbar">
-        <span class="navbar__heading">Starfinder</span>
+        <a th:href="@{/}" class="navbar__heading">Starfinder</a>
         <ul class="navbar__list">
             <li class="navbar__item" th:each="navigationItem: ${navigationItems}"
                 th:classappend="${navigationItem.active ? 'navbar__item--active' : ''}">
