@@ -22,15 +22,19 @@ class Character {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk__characters__users_owner"))
     private User owner;
 
-    void setName(String name) {
-        this.name = name;
-    }
-
     void setOwner(User owner) {
         this.owner = owner;
     }
 
-    UUID getId() {
+    public UUID getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    void setName(String name) {
+        this.name = name;
     }
 }
