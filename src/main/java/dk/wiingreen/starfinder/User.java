@@ -5,13 +5,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "AppUser")
+@Table(name = "users")
 class User {
     @Id
     private String username;
+    private String password;
 
-    void setUsername(String username) {
+    protected User() {
+    }
+
+    User(String username, String password) {
         this.username = username;
+        this.password = password;
     }
 
     Character createCharacter(String name) {
@@ -19,5 +24,17 @@ class User {
         character.setName(name);
         character.setOwner(this);
         return character;
+    }
+
+    String getUsername() {
+        return username;
+    }
+
+    void setUsername(String username) {
+        this.username = username;
+    }
+
+    String getPassword() {
+        return password;
     }
 }

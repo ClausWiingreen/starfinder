@@ -1,0 +1,15 @@
+.card {
+    --_card--border-color: light-dark(transparent, var(--color-border));
+
+    background-image: linear-gradient(0deg, var(--color-background) 95%, var(--color-background-light));
+    border: 1px solid var(--_card--border-color);
+    border-top-color: var(--color-highlight);
+    padding: var(--space-s);
+    border-radius: var(--space-s);
+    box-shadow: var(--shadow);
+    position: relative;
+}
+
+.card:hover {
+    background-image: linear-gradient(0deg, var(--color-background), var(--color-background-light));
+}

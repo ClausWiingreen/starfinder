@@ -1,0 +1,6 @@
+<div th:replace="~{layout :: layout(~{:: .page-layout})}">
+    <div class="page-layout flow">
+        <h1 th:text="|Error ${status} &ndash; ${error}|">Unknown Error</h1>
+        <p th:text="${message}">Something Went Wrong</p>
+    </div>
+</div>

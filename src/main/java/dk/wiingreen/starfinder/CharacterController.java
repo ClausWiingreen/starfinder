@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.UUID;
+import java.util.function.Function;
 
 @Controller
 @RequestMapping("/characters")
@@ -25,28 +26,39 @@ class CharacterController {
 
     @GetMapping
     String getCharacterOverview(Model model) {
-        return currentUserService.getCurrentUser().map(user -> {
+        return withUser(user -> {
             model.addAttribute("characters", characterRepository.findByOwner(user));
+            model.addAttribute("characterCreateRequest", new CharacterCreateRequest(""));
             return "/characters/overview";
-        }).orElse("redirect:/login");
+        });
     }
 
-    @PostMapping
-    String addCharacter(@Valid @ModelAttribute CharacterCreateRequest request,
-                        BindingResult bindingResult, Model model) {
+    @GetMapping("/new")
+    String getCreateCharacterForm(Model model) {
+        model.addAttribute("characterCreateRequest", new CharacterCreateRequest(""));
+        return "/characters/new";
+    }
+
+    @PostMapping("/new")
+    String createCharacter(@Valid @ModelAttribute CharacterCreateRequest request,
+                           BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
-            return "/characters/form";
+            return "/characters/new";
         }
 
-        return currentUserService.getCurrentUser().map(user -> {
+        return withUser(user -> {
             var character = user.createCharacter(request.name());
             characterRepository.save(character);
             return "redirect:/characters";
-        }).orElseGet(() -> {
-            model.addAttribute(
-                    "error",
-                    "You must be logged in to create a character.");
-            return "/error/unauthorized";
+        });
+    }
+
+
+    @GetMapping("/{id}")
+    String getCharacter(@PathVariable UUID id, Model model) {
+        return withCharacter(id, model, character -> {
+            model.addAttribute("characterEditRequest", new CharacterEditRequest(character.getName()));
+            return "characters/edit";
         });
     }
 
@@ -59,25 +71,33 @@ class CharacterController {
             return "/characters/edit";
         }
 
-        return currentUserService.getCurrentUser().map(user ->
-                characterRepository.findByIdAndOwner(id, user)
-                        .map(character -> {
-                            character.setName(request.name());
-                            characterRepository.save(character);
-                            return "redirect:/characters";
-                        }).orElseGet(() -> {
-                            model.addAttribute(
-                                    "error",
-                                    "Failed to find character with id %s".formatted(id));
-                            return "/error/not-found";
-                        })).orElse("redirect:/login");
+        return withCharacter(id, model, character -> {
+            character.setName(request.name());
+            characterRepository.save(character);
+            return "redirect:/characters";
+        });
     }
 
     @PostMapping("/{id}/delete")
     String deleteCharacter(@PathVariable UUID id) {
-        return currentUserService.getCurrentUser().map(user -> {
+        return withUser(user -> {
             characterRepository.deleteByIdAndOwner(id, user);
             return "redirect:/characters";
-        }).orElse("redirect:/login");
+        });
+    }
+
+    private String withUser(Function<User, String> action) {
+        return currentUserService.getCurrentUser().map(action).orElse("redirect:/login");
+    }
+
+    private String withCharacter(UUID id, Model model, Function<Character, String> action) {
+        return withUser(user -> characterRepository.findByIdAndOwner(id, user)
+                .map(action)
+                .orElseGet(() -> {
+                    model.addAttribute("status", 404);
+                    model.addAttribute("error", "Character not found");
+                    model.addAttribute("message", "Failed to find character with id %s".formatted(id));
+                    return "/error";
+                }));
     }
 }
