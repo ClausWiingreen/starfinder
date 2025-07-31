@@ -41,7 +41,7 @@ class CharacterIntegrationTests {
     void characterIsSavedForLoggedInUserWhenFormIsSubmitted() throws Exception {
         setupUser("testuser");
 
-        mockMvc.perform(post("/characters")
+        mockMvc.perform(post("/characters/new")
                         .param("name", "Nova Vance")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection());
@@ -106,12 +106,12 @@ class CharacterIntegrationTests {
     void characterFormRejectsEmptyName() throws Exception {
         setupUser("testuser");
 
-        mockMvc.perform(post("/characters")
+        mockMvc.perform(post("/characters/new")
                         .param("name", "")
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeHasFieldErrors("characterCreateRequest", "name"))
-                .andExpect(view().name("/characters/form"));
+                .andExpect(view().name("/characters/new"));
 
         assertThat(characterRepository.count()).isZero();
     }
