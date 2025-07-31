@@ -19,9 +19,6 @@ class SecurityConfig {
                         authorization.anyRequest().authenticated()
                 )
                 .formLogin(withDefaults())
-                .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
-                )
                 .csrf(withDefaults())
                 .build();
     }
