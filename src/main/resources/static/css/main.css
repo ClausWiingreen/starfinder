@@ -1,6 +1,7 @@
 @import url("base/reset.css");
 @import url("base/theme.css");
 @import url("base/layout.css");
+@import url("base/typography.css");
 @import url("components/card.css");
 @import url("components/clickable-object.css");
 @import url("components/navbar.css");
