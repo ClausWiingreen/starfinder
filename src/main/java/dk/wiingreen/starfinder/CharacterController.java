@@ -47,7 +47,7 @@ class CharacterController {
         }
 
         return withUser(user -> {
-            var character = user.createCharacter(request.name());
+            var character = user.createCharacter(request.name().trim());
             characterRepository.save(character);
             return "redirect:/characters";
         });
@@ -73,6 +73,8 @@ class CharacterController {
 
         return withCharacter(id, model, character -> {
             character.setName(request.name());
+            var newName = request.name().trim();
+                character.setName(newName);
             characterRepository.save(character);
             return "redirect:/characters";
         });
