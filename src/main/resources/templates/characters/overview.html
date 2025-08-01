@@ -1,11 +1,15 @@
 <div th:replace="~{layout :: layout(~{:: #characterOverview})}">
     <div class="page-layout flow" id="characterOverview">
-        <h1>Characters</h1>
+        <h1 class="typography-headline">Characters</h1>
         <a th:href="@{/characters/new}">Create new character</a>
         <ul class="grid-auto-fit popout">
-            <li th:each="character: ${characters}" class="card">
-                <a th:href="@{/characters/{id}(id=${character.id})}" class="clickable-object"
-                   th:aria-label="|Edit ${character.name}|" th:text="${character.name}">Character Name</a>
+            <li th:each="character: ${characters}" class="card grid-flow">
+                <h2 class="typography-title"
+                    th:text="${character.name}">Character Name</h2>
+                <a th:href="@{/characters/{id}(id=${character.id})}"
+                   class="button button--primary button--parent-clickable"
+                   style="justify-self: end"
+                   th:aria-label="|Edit ${character.name}|">Edit</a>
             </li>
         </ul>
     </div>
