@@ -4,14 +4,13 @@
         --font-family-heading: system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
         --font-family-monospace: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
 
-        --font-size--2: clamp(0.4221rem, 0.2906rem + 0.6572vw, 0.8rem);
-        --font-size--1: clamp(0.5626rem, 0.4105rem + 0.7606vw, 1rem);
-        --font-size-0: clamp(0.75rem, 0.5761rem + 0.8696vw, 1.25rem);
-        --font-size-1: clamp(0.9998rem, 0.804rem + 0.9787vw, 1.5625rem);
-        --font-size-2: clamp(1.3327rem, 1.1169rem + 1.0791vw, 1.9531rem);
-        --font-size-3: clamp(1.7764rem, 1.5452rem + 1.1565vw, 2.4414rem);
-        --font-size-4: clamp(2.368rem, 2.1302rem + 1.1891vw, 3.0518rem);
-        --font-size-5: clamp(3.1565rem, 2.9276rem + 1.1446vw, 3.8147rem);
+        --font-size-sm: clamp(0.8rem, 0.17vi + 0.76rem, 0.89rem);
+        --font-size-base: clamp(1rem, 0.34vi + 0.91rem, 1.19rem);
+        --font-size-md: clamp(1.25rem, 0.61vi + 1.1rem, 1.58rem);
+        --font-size-lg: clamp(1.56rem, 1vi + 1.31rem, 2.11rem);
+        --font-size-xl: clamp(1.95rem, 1.56vi + 1.56rem, 2.81rem);
+        --font-size-xxl: clamp(2.44rem, 2.38vi + 1.85rem, 3.75rem);
+        --font-size-xxxl: clamp(3.05rem, 3.54vi + 2.17rem, 5rem);
 
         --color-background-dark: light-dark(oklch(0.92 0.025 264), oklch(0.1 0.025 264));
         --color-background: light-dark(oklch(0.96 0.025 264), oklch(0.15 0.025 264));
@@ -45,26 +44,9 @@
 
     html {
         font-family: var(--font-family-base), sans-serif;
-        font-size: var(--font-size-0);
         background: var(--color-background-dark);
         color: var(--color-text);
         line-height: 1.5;
-    }
-
-    h1 {
-        font-size: var(--font-size-5);
-    }
-
-    h2 {
-        font-size: var(--font-size-4);
-    }
-
-    h3 {
-        font-size: var(--font-size-3);
-    }
-
-    h4 {
-        font-size: var(--font-size-2);
     }
 
     h1, h2, h3, h4 {
