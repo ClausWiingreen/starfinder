@@ -72,9 +72,11 @@ class CharacterController {
         }
 
         return withCharacter(id, model, character -> {
-            character.setName(request.name());
             var newName = request.name().trim();
+            if (!Objects.equals(newName, character.getName())) {
+                log.info("Updating character <{}> with name '{}'", id, newName);
                 character.setName(newName);
+            }
             characterRepository.save(character);
             return "redirect:/characters";
         });
