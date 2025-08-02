@@ -10,7 +10,6 @@
 .navbar__heading {
     color: inherit;
     text-decoration: none;
-    font-size: var(--font-size-2);
 }
 
 .navbar__list {
@@ -21,7 +20,8 @@
     --_navbar__item--font-weight: var(--navbar__item--font-weight, inherit);
 
     background-color: var(--navbar__item--background-color, transparent);
-    padding: var(--space-s);
+    padding-inline: var(--space-s);
+    padding-block: var(--space-xs);
     position: relative;
     font-weight: var(--_navbar__item--font-weight);
     border-bottom: 0.5em solid var(--navbar__item__border-color, transparent);

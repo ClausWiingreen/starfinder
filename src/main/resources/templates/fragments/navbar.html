@@ -1,10 +1,11 @@
-<header style="background-color: var(--color-background)" th:fragment="navbar">
+<header class="header" th:fragment="navbar">
     <nav class="navbar">
-        <a th:href="@{/}" class="navbar__heading">Starfinder</a>
+        <a th:href="@{/}" class="navbar__heading typography-headline">Starfinder</a>
         <ul class="navbar__list">
-            <li class="navbar__item" th:each="navigationItem: ${navigationItems}"
+            <li class="navbar__item"
+                th:each="navigationItem: ${navigationItems}"
                 th:classappend="${navigationItem.active ? 'navbar__item--active' : ''}">
-                <a class="clickable-object" th:href="@{${navigationItem.url}}"
+                <a class="clickable-object typography-title" th:href="@{${navigationItem.url}}"
                    th:text="${navigationItem.title}">Titel</a>
             </li>
         </ul>
