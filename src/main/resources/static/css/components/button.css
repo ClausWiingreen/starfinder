@@ -1,0 +1,33 @@
+.button {
+    --_button--border-color: light-dark(transparent, var(--color-border));
+    --_button--background-color: var(--button--background-color, var(--color-background));
+    --_button--color: var(--button--color, var(--color-text));
+
+    background-color: var(--_button--background-color);
+    color: var(--_button--color);
+    border: 1px solid var(--_card--border-color);
+    border-top-color: var(--color-highlight);
+    padding: var(--space-2xs) var(--space-s);
+    border-radius: var(--space-s);
+    box-shadow: var(--shadow);
+    text-decoration: none;
+}
+
+.button:hover {
+    background-color: color-mix(in hsl, var(--_button--background-color), var(--_button--color) 10%);
+}
+
+.button--primary {
+    --button--background-color: var(--color-primary);
+    --button--color: var(--color-background);
+}
+
+*:has(>.button--parent-clickable) {
+    position: relative;
+}
+
+.button--parent-clickable::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+}

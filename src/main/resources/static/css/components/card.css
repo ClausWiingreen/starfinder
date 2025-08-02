@@ -1,7 +1,9 @@
 .card {
     --_card--border-color: light-dark(transparent, var(--color-border));
+    --_card--gradient-start-color: var(--color-background);
+    --_card--gradient-end-color: var(--color-background-light);
 
-    background-image: linear-gradient(0deg, var(--color-background) 95%, var(--color-background-light));
+    background-image: linear-gradient(0deg, var(--_card--gradient-start-color) 95%, var(--_card--gradient-end-color));
     border: 1px solid var(--_card--border-color);
     border-top-color: var(--color-highlight);
     padding: var(--space-s);
@@ -10,6 +12,6 @@
     position: relative;
 }
 
-.card:hover {
-    background-image: linear-gradient(0deg, var(--color-background), var(--color-background-light));
+.card--hoverable:hover {
+    background-image: linear-gradient(0deg, var(--_card--gradient-start-color), var(--_card--gradient-end-color));
 }

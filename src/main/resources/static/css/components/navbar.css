@@ -8,7 +8,8 @@
 }
 
 .navbar__heading {
-    font-size: var(--font-size-2);
+    color: inherit;
+    text-decoration: none;
 }
 
 .navbar__list {
@@ -16,24 +17,21 @@
 }
 
 .navbar__item {
-    --_nav-list__item--background-color: var(--nav-list__item--background-color, transparent);
-    --_nav-list__item--color: var(--nav-list__item--color, var(--color-text));
     --_navbar__item--font-weight: var(--navbar__item--font-weight, inherit);
 
-    background-color: var(--_nav-list__item--background-color);
-    color: var(--_nav-list__item--color);
-    padding: var(--space-s);
+    background-color: var(--navbar__item--background-color, transparent);
+    padding-inline: var(--space-s);
+    padding-block: var(--space-xs);
     position: relative;
     font-weight: var(--_navbar__item--font-weight);
+    border-bottom: 0.5em solid var(--navbar__item__border-color, transparent);
 }
 
-.navbar__item--hover,
-.navbar__item:hover:not(.navbar__item--active) {
-    --_nav-list__item--background-color: color-mix(in hsl, var(--nav-list__item--background-color, transparent), var(--color-highlight));
+.navbar__item--hover, .navbar__item:hover {
+    --navbar__item--background-color: color-mix(in hsl, transparent, var(--color-highlight));
 }
 
 .navbar__item--active {
-    --nav-list__item--background-color: var(--color-primary);
-    --nav-list__item--color: var(--color-background);
     --navbar__item--font-weight: 600;
+    --navbar__item__border-color: var(--color-primary);
 }
