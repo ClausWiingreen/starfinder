@@ -1,0 +1,12 @@
+.input-field__label {
+    display: block;
+    font-size: var(--font-size-sm);
+    margin-block-end: var(--space-3xs);
+}
+
+.input-field__input {
+    padding: var(--space-2xs);
+    border-radius: var(--space-2xs);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-background);
+}
