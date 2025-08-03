@@ -1,6 +1,6 @@
 package dk.wiingreen.starfinder.character;
 
-import dk.wiingreen.starfinder.user.User;
+import dk.wiingreen.starfinder.auth.User;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

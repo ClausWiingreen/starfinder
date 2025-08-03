@@ -1,4 +1,4 @@
-package dk.wiingreen.starfinder.user;
+package dk.wiingreen.starfinder.auth;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;

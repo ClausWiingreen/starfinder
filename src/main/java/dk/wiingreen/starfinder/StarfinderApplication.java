@@ -1,7 +1,7 @@
 package dk.wiingreen.starfinder;
 
-import dk.wiingreen.starfinder.user.User;
-import dk.wiingreen.starfinder.user.UserRepository;
+import dk.wiingreen.starfinder.auth.User;
+import dk.wiingreen.starfinder.auth.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

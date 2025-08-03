@@ -1,8 +1,8 @@
 package dk.wiingreen.starfinder;
 
 import dk.wiingreen.starfinder.character.CharacterRepository;
-import dk.wiingreen.starfinder.user.User;
-import dk.wiingreen.starfinder.user.UserRepository;
+import dk.wiingreen.starfinder.auth.User;
+import dk.wiingreen.starfinder.auth.UserRepository;
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package dk.wiingreen.starfinder.user;
+package dk.wiingreen.starfinder.auth;
 
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.Condition;
@@ -31,7 +31,7 @@ public class UserIntegrationTests {
 
     @Test
     void newUserCanRegisterAndLoginSuccessfully() throws Exception {
-        mockMvc.perform(post("/users/register")
+        mockMvc.perform(post("/auth/register")
                         .param("username", "newuser")
                         .param("password", "securePass123")
                         .with(csrf()))
@@ -46,12 +46,12 @@ public class UserIntegrationTests {
     void registrationFailsIfUsernameAlreadyExists() throws Exception {
         userRepository.save(new User("dupeuser", passwordEncoder.encode("irrelevant")));
 
-        mockMvc.perform(post("/users/register")
+        mockMvc.perform(post("/auth/register")
                         .param("username", "dupeuser")
                         .param("password", "newPassword123")
                         .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeHasFieldErrors("registrationForm", "username"))
+                .andExpect(model().attributeHasFieldErrors("registerUserRequest", "username"))
                 .andExpect(view().name("/auth/register"));
         ;
     }

@@ -1,4 +1,4 @@
-package dk.wiingreen.starfinder.user;
+package dk.wiingreen.starfinder.auth;
 
 import dk.wiingreen.starfinder.character.Character;
 import jakarta.persistence.Entity;

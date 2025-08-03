@@ -17,7 +17,7 @@ class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorization -> authorization
-                        .requestMatchers("/css/**", "/", "/users/register").permitAll()
+                        .requestMatchers("/css/**", "/", "/auth/**", "/error").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(withDefaults())
                 .csrf(withDefaults())

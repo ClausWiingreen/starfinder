@@ -1,6 +1,6 @@
 package dk.wiingreen.starfinder.character;
 
-import dk.wiingreen.starfinder.user.User;
+import dk.wiingreen.starfinder.auth.User;
 import jakarta.persistence.*;
 
 import java.util.UUID;
