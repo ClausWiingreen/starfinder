@@ -43,6 +43,18 @@ public class UserIntegrationTests {
         assertThat(maybeUser).hasValueSatisfying(matchesPassword("securePass123"));
     }
 
+    @Test
+    void registrationFailsIfUsernameAlreadyExists() throws Exception {
+        userRepository.save(new User("dupeuser", passwordEncoder.encode("irrelevant")));
+
+        mockMvc.perform(post("/users/register")
+                        .param("username", "dupeuser")
+                        .param("password", "newPassword123")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+        ;
+    }
+
     private Condition<User> matchesPassword(String password) {
         return new Condition<>(user -> passwordEncoder.matches(password, user.getPassword()), "matches password <%s>", password);
     }
