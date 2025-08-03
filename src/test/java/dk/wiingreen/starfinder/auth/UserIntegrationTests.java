@@ -44,7 +44,7 @@ public class UserIntegrationTests {
 
     @Test
     void registrationFailsIfUsernameAlreadyExists() throws Exception {
-        userRepository.save(new User("dupeuser", passwordEncoder.encode("irrelevant")));
+        createUser("dupeuser", "irrelevant");
 
         mockMvc.perform(post("/auth/register")
                         .param("username", "dupeuser")
@@ -57,6 +57,22 @@ public class UserIntegrationTests {
         var userCount = userRepository.count();
 
         assertThat(userCount).isEqualTo(1);
+    }
+
+    @Test
+    void loginFailsWithWrongPassword() throws Exception {
+        createUser("loginuser", "corretPassword");
+
+        mockMvc.perform(post("/login")
+                        .param("username", "loginuser")
+                        .param("password", "wrongPassword")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login?error"));
+    }
+
+    private void createUser(String username, String password) {
+        userRepository.save(new User(username, passwordEncoder.encode(password)));
     }
 
     private Condition<User> matchesPassword(String password) {
