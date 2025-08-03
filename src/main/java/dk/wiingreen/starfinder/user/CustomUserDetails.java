@@ -1,4 +1,4 @@
-package dk.wiingreen.starfinder;
+package dk.wiingreen.starfinder.user;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

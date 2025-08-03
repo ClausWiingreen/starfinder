@@ -1,11 +1,11 @@
-package dk.wiingreen.starfinder;
+package dk.wiingreen.starfinder.user;
 
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 import java.util.UUID;
 
-interface UserRepository extends CrudRepository<User, UUID> {
+public interface UserRepository extends CrudRepository<User, UUID> {
     Optional<User> findByUsername(String username);
 
     boolean existsByUsername(String username);

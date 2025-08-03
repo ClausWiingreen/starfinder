@@ -1,7 +1,7 @@
-package dk.wiingreen.starfinder;
+package dk.wiingreen.starfinder.character;
 
 import jakarta.validation.constraints.NotBlank;
 
-record CharacterCreateRequest(
+record CharacterEditRequest(
         @NotBlank(message = "Name is required") String name) {
 }

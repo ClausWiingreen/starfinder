@@ -1,19 +1,13 @@
-package dk.wiingreen.starfinder;
+package dk.wiingreen.starfinder.character;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import dk.wiingreen.starfinder.user.User;
+import jakarta.persistence.*;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "characters")
-class Character {
+public class Character {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -22,7 +16,7 @@ class Character {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk__characters__users_owner"))
     private User owner;
 
-    void setOwner(User owner) {
+    public void setOwner(User owner) {
         this.owner = owner;
     }
 
@@ -34,7 +28,7 @@ class Character {
         return name;
     }
 
-    void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 }

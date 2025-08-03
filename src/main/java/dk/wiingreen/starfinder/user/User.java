@@ -1,12 +1,13 @@
-package dk.wiingreen.starfinder;
+package dk.wiingreen.starfinder.user;
 
+import dk.wiingreen.starfinder.character.Character;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")
-class User {
+public class User {
     @Id
     private String username;
     private String password;
@@ -14,13 +15,13 @@ class User {
     protected User() {
     }
 
-    User(String username, String password) {
+    public User(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    Character createCharacter(String name) {
-        Character character = new Character();
+    public Character createCharacter(String name) {
+        var character = new Character();
         character.setName(name);
         character.setOwner(this);
         return character;

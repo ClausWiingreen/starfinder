@@ -1,5 +1,8 @@
 package dk.wiingreen.starfinder;
 
+import dk.wiingreen.starfinder.character.CharacterRepository;
+import dk.wiingreen.starfinder.user.User;
+import dk.wiingreen.starfinder.user.UserRepository;
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
@@ -16,10 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -202,8 +202,6 @@ class CharacterIntegrationTests {
     }
 
     private User setupUser(String username) {
-        var user = new User();
-        user.setUsername(username);
-        return userRepository.save(user);
+        return userRepository.save(new User(username, "{noop}password"));
     }
 }

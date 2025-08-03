@@ -1,5 +1,7 @@
-package dk.wiingreen.starfinder;
+package dk.wiingreen.starfinder.character;
 
+import dk.wiingreen.starfinder.user.CurrentUserService;
+import dk.wiingreen.starfinder.user.User;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
