@@ -53,7 +53,10 @@ public class UserIntegrationTests {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeHasFieldErrors("registerUserRequest", "username"))
                 .andExpect(view().name("/auth/register"));
-        ;
+
+        var userCount = userRepository.count();
+
+        assertThat(userCount).isEqualTo(1);
     }
 
     private Condition<User> matchesPassword(String password) {
