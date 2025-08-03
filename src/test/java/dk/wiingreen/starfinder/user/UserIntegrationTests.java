@@ -52,6 +52,7 @@ public class UserIntegrationTests {
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeHasFieldErrors("registrationForm", "username"))
+                .andExpect(view().name("/auth/register"));
         ;
     }
 
