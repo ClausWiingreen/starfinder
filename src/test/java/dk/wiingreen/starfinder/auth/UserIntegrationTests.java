@@ -71,6 +71,16 @@ public class UserIntegrationTests {
                 .andExpect(redirectedUrl("/login?error"));
     }
 
+    @Test
+    void registrationFailsWithBlankPassword() throws Exception {
+        mockMvc.perform(post("/login")
+                        .param("username", "newuser")
+                        .param("password", "") // Blank password
+                        .with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+
     private void createUser(String username, String password) {
         userRepository.save(new User(username, passwordEncoder.encode(password)));
     }
