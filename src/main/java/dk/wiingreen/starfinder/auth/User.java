@@ -27,12 +27,8 @@ public class User {
         return character;
     }
 
-    String getUsername() {
+    public String getUsername() {
         return username;
-    }
-
-    void setUsername(String username) {
-        this.username = username;
     }
 
     String getPassword() {

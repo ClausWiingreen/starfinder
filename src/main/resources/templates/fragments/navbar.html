@@ -1,13 +1,23 @@
 <header class="header" th:fragment="navbar">
+    <a th:href="@{/}" class="header__heading typography-headline">Starfinder</a>
     <nav class="navbar">
-        <a th:href="@{/}" class="navbar__heading typography-headline">Starfinder</a>
         <ul class="navbar__list">
             <li class="navbar__item"
                 th:each="navigationItem: ${navigationItems}"
                 th:classappend="${navigationItem.active ? 'navbar__item--active' : ''}">
-                <a class="clickable-object typography-title" th:href="@{${navigationItem.url}}"
+                <a class="clickable-object typography-title"
+                   th:href="@{${navigationItem.url}}"
                    th:text="${navigationItem.title}">Titel</a>
             </li>
         </ul>
+        <th:block th:if="${currentUser == null}">
+            <a th:href="@{/login}">Login</a>
+            <a th:href="@{/auth/register}">Register</a>
+        </th:block>
+        <th:block th:if="${currentUser != null}">
+            Logged in as
+            <th:block th:text="${currentUser.username}">User</th:block>
+            <a th:href="@{/logout}">Logout</a>
+        </th:block>
     </nav>
 </header>
