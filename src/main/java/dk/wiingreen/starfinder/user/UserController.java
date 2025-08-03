@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -21,13 +21,14 @@ class UserController {
     }
 
     @PostMapping("/register")
-    String registerUser(String username, String password) {
-        log.info("Registering user <{}>", username);
-        if (userRepository.existsByUsername(username)) {
-            log.error("User already exists <{}>", username);
+    String registerUser(RegistrationForm form, BindingResult bindingResult) {
+        log.info("Registering user <{}>", form.username());
+        if (userRepository.existsByUsername(form.username())) {
+            log.error("User already exists <{}>", form.username());
+            bindingResult.rejectValue("username", "username.exists");
             return "/index";
         }
-        userRepository.save(new User(username, passwordEncoder.encode(password)));
+        userRepository.save(new User(form.username(), passwordEncoder.encode(form.password())));
         return "redirect:/login";
     }
 }
