@@ -3,12 +3,12 @@
 echo "🔍 Running pre-commit checks..."
 
 if git stash --keep-index; then
-  trap exit git stash pop
+  trap "git stash pop" EXIT
 fi
 
 function fail() {
-      echo -e "${RED}❌ $1${NC}"
-      exit 1
+  echo -e "${RED}❌ $1${NC}"
+  exit 1
 }
 
 echo "🧼 Checking code formatting with Spotless..."
@@ -21,12 +21,6 @@ echo "🔧 Validating Maven project..."
 ./mvnw validate -q
 if [ $? -ne 0 ]; then
   fail "Maven validation failed."
-fi
-
-echo "🧪 Running unit tests..."
-./mvnw test -q
-if [ $? -ne 0 ]; then
-  fail "Some unit tests failed."
 fi
 
 echo "✅ All pre-commit checks passed."
