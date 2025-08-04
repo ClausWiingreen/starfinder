@@ -1,5 +1,10 @@
 package dk.wiingreen.starfinder.auth;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Test;
@@ -9,87 +14,93 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
 public class UserIntegrationTests {
-    private final UserRepository userRepository;
-    private final MockMvc mockMvc;
-    private final PasswordEncoder passwordEncoder;
+  private final UserRepository userRepository;
+  private final MockMvc mockMvc;
+  private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public UserIntegrationTests(UserRepository userRepository, MockMvc mockMvc, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.mockMvc = mockMvc;
-        this.passwordEncoder = passwordEncoder;
-    }
+  @Autowired
+  public UserIntegrationTests(
+      UserRepository userRepository, MockMvc mockMvc, PasswordEncoder passwordEncoder) {
+    this.userRepository = userRepository;
+    this.mockMvc = mockMvc;
+    this.passwordEncoder = passwordEncoder;
+  }
 
-    @Test
-    void newUserCanRegisterAndLoginSuccessfully() throws Exception {
-        mockMvc.perform(post("/auth/register")
-                        .param("username", "newuser")
-                        .param("password", "securePass123")
-                        .with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/login"));
+  @Test
+  void newUserCanRegisterAndLoginSuccessfully() throws Exception {
+    mockMvc
+        .perform(
+            post("/auth/register")
+                .param("username", "newuser")
+                .param("password", "securePass123")
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/login"));
 
-        var maybeUser = userRepository.findByUsername("newuser");
-        assertThat(maybeUser).hasValueSatisfying(matchesPassword("securePass123"));
-    }
+    var maybeUser = userRepository.findByUsername("newuser");
+    assertThat(maybeUser).hasValueSatisfying(matchesPassword("securePass123"));
+  }
 
-    @Test
-    void registrationFailsIfUsernameAlreadyExists() throws Exception {
-        createUser("dupeuser", "irrelevant");
+  @Test
+  void registrationFailsIfUsernameAlreadyExists() throws Exception {
+    createUser("dupeuser", "irrelevant");
 
-        mockMvc.perform(post("/auth/register")
-                        .param("username", "dupeuser")
-                        .param("password", "newPassword123")
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeHasFieldErrors("registerUserRequest", "username"))
-                .andExpect(view().name("/auth/register"));
+    mockMvc
+        .perform(
+            post("/auth/register")
+                .param("username", "dupeuser")
+                .param("password", "newPassword123")
+                .with(csrf()))
+        .andExpect(status().isOk())
+        .andExpect(model().attributeHasFieldErrors("registerUserRequest", "username"))
+        .andExpect(view().name("/auth/register"));
 
-        var userCount = userRepository.count();
+    var userCount = userRepository.count();
 
-        assertThat(userCount).isEqualTo(1);
-    }
+    assertThat(userCount).isEqualTo(1);
+  }
 
-    @Test
-    void loginFailsWithWrongPassword() throws Exception {
-        createUser("loginuser", "corretPassword");
+  @Test
+  void loginFailsWithWrongPassword() throws Exception {
+    createUser("loginuser", "corretPassword");
 
-        mockMvc.perform(post("/login")
-                        .param("username", "loginuser")
-                        .param("password", "wrongPassword")
-                        .with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/login?error"));
-    }
+    mockMvc
+        .perform(
+            post("/login")
+                .param("username", "loginuser")
+                .param("password", "wrongPassword")
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/login?error"));
+  }
 
-    @Test
-    void registrationFailsWithBlankPassword() throws Exception {
-        mockMvc.perform(post("/auth/register")
-                        .param("username", "newuser")
-                        .param("password", "") // Blank password
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeHasFieldErrors("registerUserRequest", "password"))
-                .andExpect(view().name("/auth/register"));
+  @Test
+  void registrationFailsWithBlankPassword() throws Exception {
+    mockMvc
+        .perform(
+            post("/auth/register")
+                .param("username", "newuser")
+                .param("password", "") // Blank password
+                .with(csrf()))
+        .andExpect(status().isOk())
+        .andExpect(model().attributeHasFieldErrors("registerUserRequest", "password"))
+        .andExpect(view().name("/auth/register"));
 
-        assertThat(userRepository.findByUsername("newuser")).isEmpty();
-    }
+    assertThat(userRepository.findByUsername("newuser")).isEmpty();
+  }
 
+  private void createUser(String username, String password) {
+    userRepository.save(new User(username, passwordEncoder.encode(password)));
+  }
 
-    private void createUser(String username, String password) {
-        userRepository.save(new User(username, passwordEncoder.encode(password)));
-    }
-
-    private Condition<User> matchesPassword(String password) {
-        return new Condition<>(user -> passwordEncoder.matches(password, user.getPassword()), "matches password <%s>", password);
-    }
+  private Condition<User> matchesPassword(String password) {
+    return new Condition<>(
+        user -> passwordEncoder.matches(password, user.getPassword()),
+        "matches password <%s>",
+        password);
+  }
 }

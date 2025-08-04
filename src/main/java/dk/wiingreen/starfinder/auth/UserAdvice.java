@@ -5,14 +5,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 @ControllerAdvice
 public class UserAdvice {
-    private final CurrentUserService currentUserService;
+  private final CurrentUserService currentUserService;
 
-    public UserAdvice(CurrentUserService currentUserService) {
-        this.currentUserService = currentUserService;
-    }
+  public UserAdvice(CurrentUserService currentUserService) {
+    this.currentUserService = currentUserService;
+  }
 
-    @ModelAttribute("currentUser")
-    User getCurrentUser() {
-        return currentUserService.getCurrentUser().orElse(null);
-    }
+  @ModelAttribute("currentUser")
+  User getCurrentUser() {
+    return currentUserService.getCurrentUser().orElse(null);
+  }
 }
