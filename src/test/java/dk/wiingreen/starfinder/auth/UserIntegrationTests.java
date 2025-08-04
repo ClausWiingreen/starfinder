@@ -135,6 +135,17 @@ public class UserIntegrationTests {
     assertThat(session).isNull();
   }
 
+  @Test
+  void registrationFailsWithShortPassword() throws Exception {
+    mockMvc
+        .perform(
+            post("/auth/register")
+                .param("username", "validuser")
+                .param("password", "123")
+                .with(csrf()))
+        .andExpect(status().isOk());
+  }
+
   private void createUser(String username, String password) {
     userRepository.save(new User(username, passwordEncoder.encode(password)));
   }
