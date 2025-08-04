@@ -73,11 +73,15 @@ public class UserIntegrationTests {
 
     @Test
     void registrationFailsWithBlankPassword() throws Exception {
-        mockMvc.perform(post("/login")
+        mockMvc.perform(post("/auth/register")
                         .param("username", "newuser")
                         .param("password", "") // Blank password
                         .with(csrf()))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(model().attributeHasFieldErrors("registerUserRequest", "password"))
+                .andExpect(view().name("/auth/register"));
+
+        assertThat(userRepository.findByUsername("newuser")).isEmpty();
     }
 
 

@@ -32,7 +32,12 @@ class AuthController {
 
     @PostMapping("/register")
     String registerUser(@Valid @ModelAttribute RegisterUserRequest registerUserRequest, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "/auth/register";
+        }
+
         log.info("Registering user <{}>", registerUserRequest.username());
+
         if (userRepository.existsByUsername(registerUserRequest.username())) {
             log.error("User already exists <{}>", registerUserRequest.username());
             bindingResult.rejectValue("username", "username.exists", "Username already exists");
