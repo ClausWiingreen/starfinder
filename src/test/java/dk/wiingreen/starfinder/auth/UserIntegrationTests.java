@@ -93,6 +93,18 @@ public class UserIntegrationTests {
     assertThat(userRepository.findByUsername("newuser")).isEmpty();
   }
 
+  @Test
+  void loginFailsForUnknownUser() throws Exception {
+    mockMvc
+        .perform(
+            post("/login")
+                .param("username", "ghostuser")
+                .param("password", "anyPassword")
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/login?error"));
+  }
+
   private void createUser(String username, String password) {
     userRepository.save(new User(username, passwordEncoder.encode(password)));
   }
