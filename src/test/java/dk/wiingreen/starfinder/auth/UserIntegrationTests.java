@@ -113,7 +113,11 @@ public class UserIntegrationTests {
                 .param("username", "")
                 .param("password", "validPassword123")
                 .with(csrf()))
-        .andExpect(status().isOk());
+        .andExpect(status().isOk())
+        .andExpect(model().attributeHasFieldErrors("registerUserRequest", "username"))
+        .andExpect(view().name("/auth/register"));
+
+    assertThat(userRepository.findAll()).isEmpty();
   }
 
   private void createUser(String username, String password) {
