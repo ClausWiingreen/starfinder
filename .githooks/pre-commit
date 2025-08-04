@@ -18,7 +18,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "🔧 Validating Maven project..."
-./mvnw validate -q
+./mvnw validate
 if [ $? -ne 0 ]; then
   fail "Maven validation failed."
 fi
