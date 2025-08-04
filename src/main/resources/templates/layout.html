@@ -1,0 +1,12 @@
+<th:block th:fragment="layout(content)">
+    <html xmlns:th="http://www.thymeleaf.org" lang="en">
+    <head th:replace="~{fragments/head :: head(title='Starfinder')}"></head>
+    <body class="body-layout typography-body">
+    <header th:replace="~{fragments/navbar :: navbar}"></header>
+    <main>
+        <div th:replace="${content}"></div>
+    </main>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    </body>
+    </html>
+</th:block>

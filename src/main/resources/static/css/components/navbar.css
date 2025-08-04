@@ -1,0 +1,25 @@
+.navbar__list {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-m);
+}
+
+.navbar__item {
+    --_navbar__item--font-weight: var(--navbar__item--font-weight, inherit);
+
+    background-color: var(--navbar__item--background-color, transparent);
+    padding-inline: var(--space-s);
+    padding-block: var(--space-xs);
+    position: relative;
+    font-weight: var(--_navbar__item--font-weight);
+    border-bottom: 0.5em solid var(--navbar__item__border-color, transparent);
+}
+
+.navbar__item--hover, .navbar__item:hover {
+    --navbar__item--background-color: color-mix(in hsl, transparent, var(--color-highlight));
+}
+
+.navbar__item--active {
+    --navbar__item--font-weight: 600;
+    --navbar__item__border-color: var(--color-primary);
+}

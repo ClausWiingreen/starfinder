@@ -1,0 +1,59 @@
+@layer theme {
+    :root {
+        --font-family-base: system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+        --font-family-heading: system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+        --font-family-monospace: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+
+        --font-size-sm: clamp(0.8rem, 0.17vi + 0.76rem, 0.89rem);
+        --font-size-base: clamp(1rem, 0.34vi + 0.91rem, 1.19rem);
+        --font-size-md: clamp(1.25rem, 0.61vi + 1.1rem, 1.58rem);
+        --font-size-lg: clamp(1.56rem, 1vi + 1.31rem, 2.11rem);
+        --font-size-xl: clamp(1.95rem, 1.56vi + 1.56rem, 2.81rem);
+        --font-size-xxl: clamp(2.44rem, 2.38vi + 1.85rem, 3.75rem);
+        --font-size-xxxl: clamp(3.05rem, 3.54vi + 2.17rem, 5rem);
+
+        --color-background-dark: light-dark(oklch(0.92 0.025 264), oklch(0.1 0.025 264));
+        --color-background: light-dark(oklch(0.96 0.025 264), oklch(0.15 0.025 264));
+        --color-background-light: light-dark(oklch(1 0.025 264), oklch(0.2 0.025 264));
+        --color-text: light-dark(oklch(0.15 0.05 264), oklch(0.96 0.05 264));
+        --color-text-muted: light-dark(oklch(0.4 0.05 264), oklch(0.76 0.05 264));
+        --color-highlight: light-dark(oklch(1 0.05 264), oklch(0.5 0.05 264));
+        --color-border: light-dark(oklch(0.6 0.05 264), oklch(0.4 0.05 264));
+        --color-border-muted: light-dark(oklch(0.7 0.05 264), oklch(0.3 0.05 264));
+        --color-primary: light-dark(oklch(0.4 0.1 264), oklch(0.76 0.1 264));
+        --color-secondary: light-dark(oklch(0.4 0.1 84), oklch(0.76 0.1 84));
+        --color-danger: light-dark(oklch(0.5 0.05 30), oklch(0.7 0.05 30));
+        --color-warning: light-dark(oklch(0.5 0.05 100), oklch(0.7 0.05 100));
+        --color-success: light-dark(oklch(0.5 0.05 160), oklch(0.7 0.05 160));
+        --color-info: light-dark(oklch(0.5 0.05 260), oklch(0.7 0.05 260));
+
+        --space-3xs: clamp(0.1875rem, 0.144rem + 0.2174vw, 0.3125rem);
+        --space-2xs: clamp(0.375rem, 0.288rem + 0.4348vw, 0.625rem);
+        --space-xs: clamp(0.5625rem, 0.4321rem + 0.6522vw, 0.9375rem);
+        --space-s: clamp(0.75rem, 0.5761rem + 0.8696vw, 1.25rem);
+        --space-m: clamp(1.125rem, 0.8641rem + 1.3043vw, 1.875rem);
+        --space-l: clamp(1.5rem, 1.1522rem + 1.7391vw, 2.5rem);
+        --space-xl: clamp(2.25rem, 1.7283rem + 2.6087vw, 3.75rem);
+        --space-2xl: clamp(3rem, 2.3043rem + 3.4783vw, 5rem);
+        --space-3xl: clamp(4.5rem, 3.4565rem + 5.2174vw, 7.5rem);
+
+        --shadow: 0 2px 2px hsla(0, 0%, 0%, 0.07), 0 4px 4px hsla(0, 0%, 0%, 0.15);
+
+        color-scheme: light dark;
+    }
+
+    html {
+        font-family: var(--font-family-base), sans-serif;
+        background: var(--color-background-dark);
+        color: var(--color-text);
+        line-height: 1.5;
+    }
+
+    h1, h2, h3, h4 {
+        font-family: var(--font-family-heading), sans-serif;
+    }
+
+    h1, h2, h3, h4, button, input, label {
+        line-height: 1.1;
+    }
+}
