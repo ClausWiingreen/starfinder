@@ -18,7 +18,7 @@
                     Password
                 </label>
                 <input class="input-field__input" type="password"
-                       th:field="*{password}" required>
+                       th:field="*{password}" required minlength="8">
                 <div th:if="${#fields.hasErrors('password')}"
                      th:errors="*{password}"></div>
             </div>
