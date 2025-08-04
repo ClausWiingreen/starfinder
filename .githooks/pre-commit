@@ -1,0 +1,26 @@
+#!/bin/bash
+
+echo "🔍 Running pre-commit checks..."
+
+if git stash --keep-index; then
+  trap "git stash pop" EXIT
+fi
+
+function fail() {
+  echo -e "${RED}❌ $1${NC}"
+  exit 1
+}
+
+echo "🧼 Checking code formatting with Spotless..."
+./mvnw spotless:check
+if [ $? -ne 0 ]; then
+  fail "Spotless check failed. Please format your code with 'mvn spotless:apply'."
+fi
+
+echo "🔧 Validating Maven project..."
+./mvnw validate -q
+if [ $? -ne 0 ]; then
+  fail "Maven validation failed."
+fi
+
+echo "✅ All pre-commit checks passed."
