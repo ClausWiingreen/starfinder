@@ -12,6 +12,12 @@ public class Campaign {
   private UUID id;
 
   private String name;
-
   @ManyToOne private User owner;
+
+  protected Campaign() {}
+
+  public Campaign(String name, User owner) {
+    this.name = name;
+    this.owner = owner;
+  }
 }

@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import dk.wiingreen.starfinder.auth.User;
+import dk.wiingreen.starfinder.auth.UserRepository;
 import dk.wiingreen.starfinder.campaign.CampaignRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -21,16 +23,21 @@ import org.springframework.test.web.servlet.MockMvc;
 public class CampaignIntegrationTests {
   private final MockMvc mockMvc;
   private final CampaignRepository campaignRepository;
+  private final UserRepository userRepository;
 
   @Autowired
-  CampaignIntegrationTests(MockMvc mockMvc, CampaignRepository campaignRepository) {
+  CampaignIntegrationTests(
+      MockMvc mockMvc, CampaignRepository campaignRepository, UserRepository userRepository) {
     this.mockMvc = mockMvc;
     this.campaignRepository = campaignRepository;
+    this.userRepository = userRepository;
   }
 
   @Test
   @WithMockUser("testuser")
   public void campaignIsSavedForLoggedInUserWhenFormIsSubmitted() throws Exception {
+    userRepository.save(new User("testuser", null));
+
     mockMvc
         .perform(post("/campaigns").param("name", "The Forgotten Void").with(csrf()))
         .andExpect(status().is3xxRedirection())
@@ -38,7 +45,7 @@ public class CampaignIntegrationTests {
 
     assertThat(campaignRepository.findAll())
         .singleElement()
-        .extracting("name", "owner")
+        .extracting("name", "owner.username")
         .containsExactly("The Forgotten Void", "testuser");
   }
 }
