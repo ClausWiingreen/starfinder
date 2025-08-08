@@ -36,6 +36,9 @@ public class CampaignIntegrationTests {
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl("/campaigns"));
 
-    assertThat(campaignRepository.findAll()).singleElement();
+    assertThat(campaignRepository.findAll())
+        .singleElement()
+        .extracting("name", "owner")
+        .containsExactly("The Forgotten Void", "testuser");
   }
 }
