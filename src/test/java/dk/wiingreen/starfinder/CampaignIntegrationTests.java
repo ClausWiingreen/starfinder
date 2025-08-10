@@ -35,7 +35,7 @@ public class CampaignIntegrationTests {
 
   @Test
   @WithMockUser("testuser")
-  public void campaignIsSavedForLoggedInUserWhenFormIsSubmitted() throws Exception {
+  void campaignIsSavedForLoggedInUserWhenFormIsSubmitted() throws Exception {
     userRepository.save(new User("testuser", null));
 
     mockMvc
@@ -47,5 +47,13 @@ public class CampaignIntegrationTests {
         .singleElement()
         .extracting("name", "owner.username")
         .containsExactly("The Forgotten Void", "testuser");
+  }
+
+  @Test
+  @WithMockUser("testuser")
+  void campaignFormRejectsEmptyName() throws Exception {
+    mockMvc
+        .perform(post("/campaigns/new").param("name", "").with(csrf()))
+        .andExpect(status().isOk());
   }
 }
