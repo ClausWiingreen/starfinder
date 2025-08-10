@@ -3,8 +3,7 @@ package dk.wiingreen.starfinder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import dk.wiingreen.starfinder.auth.User;
 import dk.wiingreen.starfinder.auth.UserRepository;
@@ -54,6 +53,8 @@ public class CampaignIntegrationTests {
   void campaignFormRejectsEmptyName() throws Exception {
     mockMvc
         .perform(post("/campaigns/new").param("name", "").with(csrf()))
-        .andExpect(status().isOk());
+        .andExpect(status().isOk())
+        .andExpect(model().attributeHasFieldErrors("campaignCreateRequest", "name"))
+        .andExpect(view().name("/campaigns/new"));
   }
 }
