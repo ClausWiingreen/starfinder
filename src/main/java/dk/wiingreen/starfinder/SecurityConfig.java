@@ -22,7 +22,10 @@ class SecurityConfig {
                     .permitAll()
                     .anyRequest()
                     .authenticated())
-        .formLogin(withDefaults())
+        .formLogin(
+            formLogin -> {
+              formLogin.loginPage("/auth/login");
+            })
         .csrf(withDefaults())
         .build();
   }
