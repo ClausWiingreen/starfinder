@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 @ControllerAdvice
 public class NavigationAdvice {
   private final List<NavigationItem> navigationItems =
-      List.of(new NavigationItem("Characters", "/characters", false));
+      List.of(
+          new NavigationItem("Characters", "/characters", false),
+          new NavigationItem("Campaigns", "/campaigns", false));
 
   @ModelAttribute("navigationItems")
   List<NavigationItem> getNavigationItems(HttpServletRequest request) {
