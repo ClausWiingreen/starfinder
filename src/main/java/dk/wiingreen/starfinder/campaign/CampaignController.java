@@ -3,35 +3,36 @@ package dk.wiingreen.starfinder.campaign;
 import dk.wiingreen.starfinder.auth.CurrentUserService;
 import dk.wiingreen.starfinder.auth.User;
 import jakarta.validation.Valid;
+import java.util.UUID;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping(CampaignController.CAMPAIGN_PATH)
-public class CampaignController {
+class CampaignController {
   static final String CAMPAIGN_PATH = "/campaigns";
   private static final String CREATE_SUBPATH = "/new";
 
   private final CampaignRepository campaignRepository;
   private final CurrentUserService currentUserService;
 
-  public CampaignController(
-      CampaignRepository campaignRepository, CurrentUserService currentUserService) {
+  CampaignController(CampaignRepository campaignRepository, CurrentUserService currentUserService) {
     this.campaignRepository = campaignRepository;
     this.currentUserService = currentUserService;
   }
 
   @GetMapping
-  public String getCampaignOverview() {
+  String getCampaignOverview() {
     return "/campaigns/overview";
   }
 
   @GetMapping(CREATE_SUBPATH)
-  public String getCreateCampaignForm(Model model) {
+  String getCreateCampaignForm(Model model) {
     model.addAttribute("campaignCreateRequest", new CampaignCreateRequest(""));
     return "/campaigns/new";
   }
@@ -44,6 +45,11 @@ public class CampaignController {
     }
     User currentUser = currentUserService.getCurrentUserOrThrow();
     campaignRepository.save(new Campaign(campaignCreateRequest.name(), currentUser));
+    return "redirect:/campaigns";
+  }
+
+  @GetMapping("/{id}")
+  String getCampaign(@PathVariable UUID id) {
     return "redirect:/campaigns";
   }
 }

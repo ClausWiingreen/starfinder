@@ -63,7 +63,7 @@ public class CampaignIntegrationTests {
   @Test
   @WithMockUser("intruder")
   void userCannotAccessOtherUsersCampaign() throws Exception {
-    var owner = new User("owner", null);
+    var owner = userRepository.save(new User("owner", null));
     var campaign = campaignRepository.save(new Campaign("campaignName", owner));
 
     mockMvc
