@@ -1,3 +1,5 @@
 package dk.wiingreen.starfinder.campaign;
 
-public record CampaignCreateRequest(String name) {}
+import jakarta.validation.constraints.NotBlank;
+
+public record CampaignCreateRequest(@NotBlank String name) {}

@@ -23,4 +23,10 @@ public class CurrentUserService {
     var username = authentication.getName();
     return userRepository.findByUsername(username);
   }
+
+  public User getCurrentUserOrThrow() {
+    return getCurrentUser()
+        .orElseThrow(
+            () -> new IllegalStateException("Asked to get the current user while not logged in"));
+  }
 }

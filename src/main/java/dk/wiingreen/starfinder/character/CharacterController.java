@@ -1,11 +1,9 @@
 package dk.wiingreen.starfinder.character;
 
 import dk.wiingreen.starfinder.auth.CurrentUserService;
-import dk.wiingreen.starfinder.auth.User;
 import jakarta.validation.Valid;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -28,12 +26,11 @@ class CharacterController {
 
   @GetMapping
   String getCharacterOverview(Model model) {
-    return withUser(
-        user -> {
-          model.addAttribute("characters", characterRepository.findByOwner(user));
-          model.addAttribute("characterCreateRequest", new CharacterCreateRequest(""));
-          return "/characters/overview";
-        });
+    var user = currentUserService.getCurrentUserOrThrow();
+    var characters = characterRepository.findByOwner(user);
+    model.addAttribute("characters", characters);
+    model.addAttribute("characterCreateRequest", new CharacterCreateRequest(""));
+    return "/characters/overview";
   }
 
   @GetMapping("/new")
@@ -49,23 +46,30 @@ class CharacterController {
       return "/characters/new";
     }
 
-    return withUser(
-        user -> {
-          var character = user.createCharacter(request.name().trim());
-          characterRepository.save(character);
-          return "redirect:/characters";
-        });
+    var user = currentUserService.getCurrentUserOrThrow();
+    var character = user.createCharacter(request.name().trim());
+    characterRepository.save(character);
+    return "redirect:/characters";
   }
 
   @GetMapping("/{id}")
   String getCharacter(@PathVariable UUID id, Model model) {
-    return withCharacter(
-        id,
-        model,
-        character -> {
-          model.addAttribute("characterEditRequest", new CharacterEditRequest(character.getName()));
-          return "characters/edit";
-        });
+    var user = currentUserService.getCurrentUserOrThrow();
+    return characterRepository
+        .findByIdAndOwner(id, user)
+        .map(
+            character -> {
+              model.addAttribute(
+                  "characterEditRequest", new CharacterEditRequest(character.getName()));
+              return "characters/edit";
+            })
+        .orElseGet(
+            () -> {
+              model.addAttribute("status", 404);
+              model.addAttribute("error", "Character not found");
+              model.addAttribute("message", "Failed to find character with id %s".formatted(id));
+              return "/error";
+            });
   }
 
   @PostMapping("/{id}")
@@ -78,46 +82,32 @@ class CharacterController {
       return "/characters/edit";
     }
 
-    return withCharacter(
-        id,
-        model,
-        character -> {
-          var newName = request.name().trim();
-          if (!Objects.equals(newName, character.getName())) {
-            log.info("Updating character <{}> with name '{}'", id, newName);
-            character.setName(newName);
-          }
-          characterRepository.save(character);
-          return "redirect:/characters";
-        });
+    var user = currentUserService.getCurrentUserOrThrow();
+    return characterRepository
+        .findByIdAndOwner(id, user)
+        .map(
+            character -> {
+              var newName = request.name().trim();
+              if (!Objects.equals(newName, character.getName())) {
+                log.info("Updating character <{}> with name '{}'", id, newName);
+                character.setName(newName);
+              }
+              characterRepository.save(character);
+              return "redirect:/characters";
+            })
+        .orElseGet(
+            () -> {
+              model.addAttribute("status", 404);
+              model.addAttribute("error", "Character not found");
+              model.addAttribute("message", "Failed to find character with id %s".formatted(id));
+              return "/error";
+            });
   }
 
   @PostMapping("/{id}/delete")
   String deleteCharacter(@PathVariable UUID id) {
-    return withUser(
-        user -> {
-          characterRepository.deleteByIdAndOwner(id, user);
-          return "redirect:/characters";
-        });
-  }
-
-  private String withUser(Function<User, String> action) {
-    return currentUserService.getCurrentUser().map(action).orElse("redirect:/login");
-  }
-
-  private String withCharacter(UUID id, Model model, Function<Character, String> action) {
-    return withUser(
-        user ->
-            characterRepository
-                .findByIdAndOwner(id, user)
-                .map(action)
-                .orElseGet(
-                    () -> {
-                      model.addAttribute("status", 404);
-                      model.addAttribute("error", "Character not found");
-                      model.addAttribute(
-                          "message", "Failed to find character with id %s".formatted(id));
-                      return "/error";
-                    }));
+    var user = currentUserService.getCurrentUserOrThrow();
+    characterRepository.deleteByIdAndOwner(id, user);
+    return "redirect:/characters";
   }
 }

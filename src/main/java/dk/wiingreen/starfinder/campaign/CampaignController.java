@@ -2,9 +2,10 @@ package dk.wiingreen.starfinder.campaign;
 
 import dk.wiingreen.starfinder.auth.CurrentUserService;
 import dk.wiingreen.starfinder.auth.User;
-import java.util.Optional;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,9 +37,13 @@ public class CampaignController {
   }
 
   @PostMapping(CREATE_SUBPATH)
-  String createCampaign(String name) {
-    Optional<User> currentUser = currentUserService.getCurrentUser();
-    campaignRepository.save(new Campaign(name, currentUser.orElse(null)));
+  String createCampaign(
+      @Valid CampaignCreateRequest campaignCreateRequest, BindingResult bindingResult) {
+    if (bindingResult.hasErrors()) {
+      return "/campaigns/new";
+    }
+    User currentUser = currentUserService.getCurrentUserOrThrow();
+    campaignRepository.save(new Campaign(campaignCreateRequest.name(), currentUser));
     return "redirect:/campaigns";
   }
 }
