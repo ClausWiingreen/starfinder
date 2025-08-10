@@ -4,12 +4,17 @@ import dk.wiingreen.starfinder.auth.CurrentUserService;
 import dk.wiingreen.starfinder.auth.User;
 import java.util.Optional;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/campaigns")
+@RequestMapping(CampaignController.CAMPAIGN_PATH)
 public class CampaignController {
+  static final String CAMPAIGN_PATH = "/campaigns";
+  private static final String CREATE_SUBPATH = "/new";
+
   private final CampaignRepository campaignRepository;
   private final CurrentUserService currentUserService;
 
@@ -19,7 +24,18 @@ public class CampaignController {
     this.currentUserService = currentUserService;
   }
 
-  @PostMapping
+  @GetMapping
+  public String getCampaignOverview() {
+    return "/campaigns/overview";
+  }
+
+  @GetMapping(CREATE_SUBPATH)
+  public String getCreateCampaignForm(Model model) {
+    model.addAttribute("campaignCreateRequest", new CampaignCreateRequest(""));
+    return "/campaigns/new";
+  }
+
+  @PostMapping(CREATE_SUBPATH)
   String createCampaign(String name) {
     Optional<User> currentUser = currentUserService.getCurrentUser();
     campaignRepository.save(new Campaign(name, currentUser.orElse(null)));

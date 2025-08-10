@@ -59,6 +59,6 @@ class AuthController {
         new User(
             registerUserRequest.username(),
             passwordEncoder.encode(registerUserRequest.password())));
-    return "redirect:/login";
+    return "redirect:/auth/login";
   }
 }

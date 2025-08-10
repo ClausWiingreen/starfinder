@@ -39,7 +39,7 @@ public class CampaignIntegrationTests {
     userRepository.save(new User("testuser", null));
 
     mockMvc
-        .perform(post("/campaigns").param("name", "The Forgotten Void").with(csrf()))
+        .perform(post("/campaigns/new").param("name", "The Forgotten Void").with(csrf()))
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl("/campaigns"));
 

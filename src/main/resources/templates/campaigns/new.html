@@ -1,0 +1,22 @@
+<div th:replace="~{layout :: layout(~{:: .page-layout})}">
+    <div class="page-layout flow">
+        <h1 class="typography-headline">Create a new Campaign</h1>
+        <form class="flow" method="post" th:object="${campaignCreateRequest}">
+            <input type="hidden" th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+            <div>
+                <div class="input-field">
+                    <label class="input-field__label" for="name">
+                        Give the campaign a name (required)
+                    </label>
+                    <input class="input-field__input" type="text"
+                           th:field="*{name}" required>
+                </div>
+                <div th:if="${#fields.hasErrors('name')}"
+                     th:errors="*{name}"></div>
+            </div>
+            <button class="button button--primary">Submit</button>
+            <a th:href="@{/campaigns}" class="button">Cancel</a>
+        </form>
+    </div>
+</div>
