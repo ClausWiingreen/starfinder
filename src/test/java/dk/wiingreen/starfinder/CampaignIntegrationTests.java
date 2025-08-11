@@ -63,12 +63,14 @@ public class CampaignIntegrationTests {
   @Test
   @WithMockUser("intruder")
   void userCannotAccessOtherUsersCampaign() throws Exception {
+    userRepository.save(new User("intruder", null));
     var owner = userRepository.save(new User("owner", null));
     var campaign = campaignRepository.save(new Campaign("campaignName", owner));
 
     mockMvc
         .perform(get("/campaigns/%s".formatted(campaign.getId())))
-        .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/campaigns"));
+        .andExpect(status().isOk())
+        .andExpect(view().name("/error"))
+        .andExpect(model().attribute("status", 404));
   }
 }

@@ -49,7 +49,21 @@ class CampaignController {
   }
 
   @GetMapping("/{id}")
-  String getCampaign(@PathVariable UUID id) {
-    return "redirect:/campaigns";
+  String getCampaign(@PathVariable UUID id, Model model) {
+    var user = currentUserService.getCurrentUserOrThrow();
+    return campaignRepository
+        .findByIdAndOwner(id, user)
+        .map(
+            campaign -> {
+              model.addAttribute("campaign", campaign);
+              return "/campaigns/view";
+            })
+        .orElseGet(
+            () -> {
+              model.addAttribute("status", 404);
+              model.addAttribute("error", "Campaign not found");
+              model.addAttribute("message", "Failed to find campaign with id %s".formatted(id));
+              return "/error";
+            });
   }
 }
