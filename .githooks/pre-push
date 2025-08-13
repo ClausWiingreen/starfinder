@@ -12,7 +12,7 @@ function fail() {
 }
 
 echo "🔧 Running tests..."
-./mvnw verify
+./mvnw verify -P coverage
 if [ $? -ne 0 ]; then
   fail "There were test failures."
 fi
