@@ -1,0 +1,12 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: starfinder-postgres-dev
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_PASSWORD: starfinder
+      POSTGRES_USER: starfinder
+      POSTGRES_DB: starfinder-dev
+    ports:
+      - "5432:5432"
