@@ -68,4 +68,9 @@ class CampaignController {
               return "/error";
             });
   }
+
+  @PostMapping("/{id}")
+  String editCampaign(@PathVariable UUID id) {
+    return "campaigns/overview";
+  }
 }
