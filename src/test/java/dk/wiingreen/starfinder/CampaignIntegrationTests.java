@@ -103,4 +103,13 @@ public class CampaignIntegrationTests {
         .extracting("name")
         .containsExactlyInAnyOrder("A—Drift in the Vast", "A—Signal of Screams");
   }
+
+  @Test
+  @WithMockUser("owner")
+  void campaignEditFormRejectsEmptyName() throws Exception {
+    var campaign = campaignRepository.save(new Campaign("Original Campaign", null));
+    mockMvc
+        .perform(post("/campaigns/{id}", campaign.getId()).param("name", "").with(csrf()))
+        .andExpect(status().isOk());
+  }
 }
