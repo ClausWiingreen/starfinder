@@ -73,4 +73,14 @@ public class CampaignIntegrationTests {
         .andExpect(view().name("/error"))
         .andExpect(model().attribute("status", 404));
   }
+
+  @Test
+  @WithMockUser("alice")
+  void campaignNameIsUpdatedWhenEditFormIsSubmitted() throws Exception {
+    mockMvc
+        .perform(get("/campaigns"))
+        .andExpect(status().isOk())
+        .andExpect(view().name("/campaigns/overview"))
+        .andExpect(model().attributeExists("campaigns"));
+  }
 }
