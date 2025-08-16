@@ -28,7 +28,8 @@ class CampaignController {
 
   @GetMapping
   String getCampaignOverview(Model model) {
-    model.addAttribute("campaigns", campaignRepository.findAll());
+    User currentUser = currentUserService.getCurrentUserOrThrow();
+    model.addAttribute("campaigns", campaignRepository.findAllByOwner(currentUser));
     return "/campaigns/overview";
   }
 
