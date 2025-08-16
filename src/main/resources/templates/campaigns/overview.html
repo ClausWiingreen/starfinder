@@ -2,5 +2,15 @@
     <div class="page-layout flow">
         <h1 class="typography-headline">Campaign</h1>
         <a th:href="@{/campaigns/new}">Create new campaign</a>
+        <ul class="grid-auto-fit popout">
+            <li th:each="campaign: ${campaigns}" class="card grid-flow">
+                <h2 class="typography-title"
+                    th:text="${campaign.name}">Campaign Name</h2>
+                <a th:href="@{/campaigns/{id}(id=${campaign.id})}"
+                   class="button button--primary button--parent-clickable"
+                   style="justify-self: end"
+                   th:aria-label="|Edit ${campaign.name}|">Edit</a>
+            </li>
+        </ul>
     </div>
 </div>

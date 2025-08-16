@@ -27,7 +27,8 @@ class CampaignController {
   }
 
   @GetMapping
-  String getCampaignOverview() {
+  String getCampaignOverview(Model model) {
+    model.addAttribute("campaigns", campaignRepository.findAll());
     return "/campaigns/overview";
   }
 
