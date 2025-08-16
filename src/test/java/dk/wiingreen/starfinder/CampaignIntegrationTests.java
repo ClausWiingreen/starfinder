@@ -11,6 +11,8 @@ import dk.wiingreen.starfinder.auth.UserRepository;
 import dk.wiingreen.starfinder.campaign.Campaign;
 import dk.wiingreen.starfinder.campaign.CampaignRepository;
 import jakarta.transaction.Transactional;
+import java.util.List;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -77,10 +79,28 @@ public class CampaignIntegrationTests {
   @Test
   @WithMockUser("alice")
   void campaignNameIsUpdatedWhenEditFormIsSubmitted() throws Exception {
-    mockMvc
-        .perform(get("/campaigns"))
-        .andExpect(status().isOk())
-        .andExpect(view().name("/campaigns/overview"))
-        .andExpect(model().attributeExists("campaigns"));
+    var alice = userRepository.save(new User("alice", null));
+    var bob = userRepository.save(new User("bob", null));
+
+    campaignRepository.saveAll(
+        List.of(
+            new Campaign("A—Drift in the Vast", alice),
+            new Campaign("A—Signal of Screams", alice),
+            new Campaign("A—Dead Suns", bob)));
+
+    var result =
+        mockMvc
+            .perform(get("/campaigns"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("/campaigns/overview"))
+            .andExpect(model().attributeExists("campaigns"))
+            .andReturn();
+
+    var modelAndView = result.getModelAndView();
+    assertThat(modelAndView)
+        .isNotNull()
+        .extracting("model.campaigns", InstanceOfAssertFactories.list(String.class))
+        .extracting("name")
+        .containsExactlyInAnyOrder("A—Drift in the Vast", "A—Signal of Screams");
   }
 }
