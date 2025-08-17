@@ -113,5 +113,10 @@ public class CampaignIntegrationTests {
         .andExpect(status().isOk())
         .andExpect(model().attributeHasFieldErrors("campaignEditRequest", "name"))
         .andExpect(view().name("/campaigns/edit"));
+
+    var reloadedCampaign = campaignRepository.findById(campaign.getId());
+
+    assertThat(reloadedCampaign)
+        .hasValueSatisfying(cr -> assertThat(cr.getName()).isEqualTo(campaign.getName()));
   }
 }
