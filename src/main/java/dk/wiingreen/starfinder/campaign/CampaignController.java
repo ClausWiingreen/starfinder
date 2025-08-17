@@ -2,8 +2,11 @@ package dk.wiingreen.starfinder.campaign;
 
 import dk.wiingreen.starfinder.auth.CurrentUserService;
 import dk.wiingreen.starfinder.auth.User;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 class CampaignController {
   static final String CAMPAIGN_PATH = "/campaigns";
   private static final String CREATE_SUBPATH = "/new";
+  private static final Logger log = LoggerFactory.getLogger(CampaignController.class);
 
   private final CampaignRepository campaignRepository;
   private final CurrentUserService currentUserService;
@@ -43,6 +47,7 @@ class CampaignController {
       return "/campaigns/new";
     }
     User currentUser = currentUserService.getCurrentUserOrThrow();
+    log.info("Creating campaign: {}", campaignCreateRequest);
     campaignRepository.save(new Campaign(campaignCreateRequest.name(), currentUser));
     return "redirect:/campaigns";
   }
@@ -56,6 +61,7 @@ class CampaignController {
             campaign -> {
               model.addAttribute(
                   "campaignEditRequest", new CampaignEditRequest(campaign.getName()));
+              model.addAttribute("id", campaign.getId());
               return "/campaigns/edit";
             })
         .orElseGet(
@@ -76,7 +82,9 @@ class CampaignController {
   }
 
   @PostMapping("/{id}/delete")
+  @Transactional
   String deleteCampaign(@PathVariable UUID id) {
+    log.info("Trying to delete campaign with id {}", id);
     var user = currentUserService.getCurrentUserOrThrow();
     campaignRepository.deleteByIdAndOwner(id, user);
     return "redirect:/campaigns";

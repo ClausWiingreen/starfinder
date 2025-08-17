@@ -22,6 +22,11 @@
     --button--color: var(--color-background);
 }
 
+.button--alert {
+    --button--background-color: var(--color-danger);
+    --button--color: var(--color-background);
+}
+
 *:has(>.button--parent-clickable) {
     position: relative;
 }
