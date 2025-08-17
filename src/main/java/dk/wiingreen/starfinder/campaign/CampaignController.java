@@ -77,6 +77,7 @@ class CampaignController {
 
   @PostMapping("/{id}/delete")
   String deleteCampaign(@PathVariable UUID id) {
+    campaignRepository.deleteById(id);
     return "redirect:/campaigns";
   }
 }
