@@ -12,6 +12,7 @@ import dk.wiingreen.starfinder.campaign.Campaign;
 import dk.wiingreen.starfinder.campaign.CampaignRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.function.Consumer;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,10 @@ public class CampaignIntegrationTests {
     this.mockMvc = mockMvc;
     this.campaignRepository = campaignRepository;
     this.userRepository = userRepository;
+  }
+
+  static Consumer<Campaign> campaignNameMatching(final String name) {
+    return campaign -> assertThat(campaign.getName()).isEqualTo(name);
   }
 
   @Test
@@ -117,8 +122,7 @@ public class CampaignIntegrationTests {
 
     var reloadedCampaign = campaignRepository.findById(campaign.getId());
 
-    assertThat(reloadedCampaign)
-        .hasValueSatisfying(cr -> assertThat(cr.getName()).isEqualTo(campaign.getName()));
+    assertThat(reloadedCampaign).hasValueSatisfying(campaignNameMatching(campaign.getName()));
   }
 
   @Test
@@ -170,7 +174,7 @@ public class CampaignIntegrationTests {
     var reloadedCampaign = campaignRepository.findById(campaign.getId());
     assertThat(reloadedCampaign)
         .isPresent()
-        .hasValueSatisfying(rc -> assertThat(rc.getName()).isEqualTo("New Campaign Name"));
+        .hasValueSatisfying(campaignNameMatching("New Campaign Name"));
   }
 
   @Test
@@ -189,6 +193,6 @@ public class CampaignIntegrationTests {
     var reloadedCampaign = campaignRepository.findById(campaign.getId());
     assertThat(reloadedCampaign)
         .isPresent()
-        .hasValueSatisfying(rc -> assertThat(rc.getName()).isEqualTo("Owner Campaign"));
+        .hasValueSatisfying(campaignNameMatching("Owner Campaign"));
   }
 }
