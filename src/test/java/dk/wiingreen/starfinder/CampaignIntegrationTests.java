@@ -108,6 +108,7 @@ public class CampaignIntegrationTests {
   @WithMockUser("owner")
   void campaignEditFormRejectsEmptyName() throws Exception {
     var campaign = campaignRepository.save(new Campaign("Original Campaign", null));
+
     mockMvc
         .perform(post("/campaigns/{id}", campaign.getId()).param("name", "").with(csrf()))
         .andExpect(status().isOk())

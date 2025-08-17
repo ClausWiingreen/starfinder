@@ -1,5 +1,21 @@
 <div th:replace="~{layout :: layout(~{:: .page-layout})}">
     <div class="page-layout flow">
         <h1>Edit Campaign</h1>
+
+        <form class="flow" method="post" th:object="${campaignEditRequest}">
+            <input type="hidden" th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+            <div class="input-field">
+                <label class="input-field__label" for="name">
+                    Edit the name of the campaign (required)
+                </label>
+                <input class="input-field__input" type="text" th:field="*{name}"
+                       required>
+                <p th:if="${#fields.hasErrors('name')}"
+                   th:errors="*{name}">Error for name</p>
+            </div>
+            <button class="button button--primary">Submit</button>
+            <a th:href="@{/campaigns}" class="button">Cancel</a>
+        </form>
     </div>
 </div>

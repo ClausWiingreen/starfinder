@@ -54,7 +54,8 @@ class CampaignController {
         .findByIdAndOwner(id, user)
         .map(
             campaign -> {
-              model.addAttribute("campaign", campaign);
+              model.addAttribute(
+                  "campaignEditRequest", new CampaignEditRequest(campaign.getName()));
               return "/campaigns/edit";
             })
         .orElseGet(
