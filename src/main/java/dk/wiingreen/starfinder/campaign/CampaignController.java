@@ -55,7 +55,7 @@ class CampaignController {
         .map(
             campaign -> {
               model.addAttribute("campaign", campaign);
-              return "/campaigns/view";
+              return "/campaigns/edit";
             })
         .orElseGet(
             () -> {
@@ -71,6 +71,6 @@ class CampaignController {
       @PathVariable UUID id,
       @Valid @ModelAttribute CampaignEditRequest campaignEditRequest,
       BindingResult bindingResult) {
-    return "campaigns/overview";
+    return "/campaigns/edit";
   }
 }
