@@ -28,6 +28,15 @@ class CampaignController {
     this.currentUserService = currentUserService;
   }
 
+  private static Supplier<String> campaignNotFound(UUID id, Model model) {
+    return () -> {
+      model.addAttribute("status", 404);
+      model.addAttribute("error", "Campaign not found");
+      model.addAttribute("message", "Failed to find campaign with id %s".formatted(id));
+      return "/error";
+    };
+  }
+
   @GetMapping
   String getCampaignOverview(Model model) {
     User currentUser = currentUserService.getCurrentUserOrThrow();
@@ -77,8 +86,9 @@ class CampaignController {
     if (bindingResult.hasErrors()) {
       return "/campaigns/edit";
     }
+    var user = currentUserService.getCurrentUserOrThrow();
     return campaignRepository
-        .findById(id)
+        .findByIdAndOwner(id, user)
         .map(
             campaign -> {
               if (!campaign.getName().equals(campaignEditRequest.name())) {
@@ -102,14 +112,5 @@ class CampaignController {
     var user = currentUserService.getCurrentUserOrThrow();
     campaignRepository.deleteByIdAndOwner(id, user);
     return "redirect:/campaigns";
-  }
-
-  private Supplier<String> campaignNotFound(UUID id, Model model) {
-    return () -> {
-      model.addAttribute("status", 404);
-      model.addAttribute("error", "Campaign not found");
-      model.addAttribute("message", "Failed to find campaign with id %s".formatted(id));
-      return "/error";
-    };
   }
 }

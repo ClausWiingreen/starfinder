@@ -187,8 +187,14 @@ public class CampaignIntegrationTests {
     mockMvc
         .perform(
             post("/campaigns/{id}", campaign.getId()).param("name", "Hacked Name").with(csrf()))
-        .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/campaigns"));
+        .andExpect(status().isOk())
+        .andExpect(model().attribute("status", 404))
+        .andExpect(model().attribute("error", "Campaign not found"))
+        .andExpect(
+            model()
+                .attribute(
+                    "message", "Failed to find campaign with id %s".formatted(campaign.getId())))
+        .andExpect(view().name("/error"));
 
     var reloadedCampaign = campaignRepository.findById(campaign.getId());
     assertThat(reloadedCampaign)
