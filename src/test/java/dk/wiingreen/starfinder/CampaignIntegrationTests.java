@@ -172,4 +172,23 @@ public class CampaignIntegrationTests {
         .isPresent()
         .hasValueSatisfying(rc -> assertThat(rc.getName()).isEqualTo("New Campaign Name"));
   }
+
+  @Test
+  @WithMockUser("intruder")
+  void userCannotEditOthersCampaign() throws Exception {
+    var owner = userRepository.save(new User("owner", null));
+    userRepository.save(new User("intruder", null));
+    var campaign = campaignRepository.save(new Campaign("Owner Campaign", owner));
+
+    mockMvc
+        .perform(
+            post("/campaigns/{id}", campaign.getId()).param("name", "Hacked Name").with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/campaigns"));
+
+    var reloadedCampaign = campaignRepository.findById(campaign.getId());
+    assertThat(reloadedCampaign)
+        .isPresent()
+        .hasValueSatisfying(rc -> assertThat(rc.getName()).isEqualTo("Owner Campaign"));
+  }
 }
