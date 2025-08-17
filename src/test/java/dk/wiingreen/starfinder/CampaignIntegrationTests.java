@@ -120,4 +120,14 @@ public class CampaignIntegrationTests {
     assertThat(reloadedCampaign)
         .hasValueSatisfying(cr -> assertThat(cr.getName()).isEqualTo(campaign.getName()));
   }
+
+  @Test
+  @WithMockUser("owner")
+  void userCanDeleteOwnCampaign() throws Exception {
+    var campaign = campaignRepository.save(new Campaign("Disposable Campaign", null));
+
+    mockMvc
+        .perform(post("/campaigns/{id}/delete", campaign.getId()).with(csrf()))
+        .andExpect(status().is3xxRedirection());
+  }
 }
