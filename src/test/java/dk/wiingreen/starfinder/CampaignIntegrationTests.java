@@ -111,6 +111,7 @@ public class CampaignIntegrationTests {
     mockMvc
         .perform(post("/campaigns/{id}", campaign.getId()).param("name", "").with(csrf()))
         .andExpect(status().isOk())
-        .andExpect(model().attributeHasFieldErrors("campaignEditRequest", "name"));
+        .andExpect(model().attributeHasFieldErrors("campaignEditRequest", "name"))
+        .andExpect(view().name("/campaigns/edit"));
   }
 }
