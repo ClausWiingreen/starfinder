@@ -2,6 +2,7 @@ package dk.wiingreen.starfinder.campaign;
 
 import dk.wiingreen.starfinder.auth.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import java.util.UUID;
 
 @Entity
@@ -28,5 +29,9 @@ public class Campaign {
 
   public String getName() {
     return name;
+  }
+
+  public void setName(@NotBlank String value) {
+    this.name = value;
   }
 }

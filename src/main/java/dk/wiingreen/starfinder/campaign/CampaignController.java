@@ -5,6 +5,7 @@ import dk.wiingreen.starfinder.auth.User;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import java.util.UUID;
+import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -64,21 +65,34 @@ class CampaignController {
               model.addAttribute("id", campaign.getId());
               return "/campaigns/edit";
             })
-        .orElseGet(
-            () -> {
-              model.addAttribute("status", 404);
-              model.addAttribute("error", "Campaign not found");
-              model.addAttribute("message", "Failed to find campaign with id %s".formatted(id));
-              return "/error";
-            });
+        .orElseGet(campaignNotFound(id, model));
   }
 
   @PostMapping("/{id}")
   String editCampaign(
       @PathVariable UUID id,
       @Valid @ModelAttribute CampaignEditRequest campaignEditRequest,
-      BindingResult bindingResult) {
-    return "/campaigns/edit";
+      BindingResult bindingResult,
+      Model model) {
+    if (bindingResult.hasErrors()) {
+      return "/campaigns/edit";
+    }
+    return campaignRepository
+        .findById(id)
+        .map(
+            campaign -> {
+              if (!campaign.getName().equals(campaignEditRequest.name())) {
+                log.info(
+                    "Updating campaign with id <{}> name from <{}> to <{}>",
+                    id,
+                    campaign.getName(),
+                    campaignEditRequest.name());
+                campaign.setName(campaignEditRequest.name());
+              }
+              campaignRepository.save(campaign);
+              return "redirect:/campaigns";
+            })
+        .orElseGet(campaignNotFound(id, model));
   }
 
   @PostMapping("/{id}/delete")
@@ -88,5 +102,14 @@ class CampaignController {
     var user = currentUserService.getCurrentUserOrThrow();
     campaignRepository.deleteByIdAndOwner(id, user);
     return "redirect:/campaigns";
+  }
+
+  private Supplier<String> campaignNotFound(UUID id, Model model) {
+    return () -> {
+      model.addAttribute("status", 404);
+      model.addAttribute("error", "Campaign not found");
+      model.addAttribute("message", "Failed to find campaign with id %s".formatted(id));
+      return "/error";
+    };
   }
 }
