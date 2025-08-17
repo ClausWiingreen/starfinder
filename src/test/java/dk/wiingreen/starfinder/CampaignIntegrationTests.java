@@ -78,7 +78,7 @@ public class CampaignIntegrationTests {
 
   @Test
   @WithMockUser("alice")
-  void campaignNameIsUpdatedWhenEditFormIsSubmitted() throws Exception {
+  void campaignsAreOnlyListedForCurrentUser() throws Exception {
     var alice = userRepository.save(new User("alice", null));
     var bob = userRepository.save(new User("bob", null));
 
@@ -151,5 +151,25 @@ public class CampaignIntegrationTests {
 
     var reloadedCampaign = campaignRepository.findById(campaign.getId());
     assertThat(reloadedCampaign).isPresent();
+  }
+
+  @Test
+  @WithMockUser("owner")
+  void campaignNameIsUpdatedWhenEditFormIsSubmitted() throws Exception {
+    var owner = userRepository.save(new User("owner", null));
+    var campaign = campaignRepository.save(new Campaign("Old Name", owner));
+
+    mockMvc
+        .perform(
+            post("/campaigns/{id}", campaign.getId())
+                .param("name", "New Campaign Name")
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/campaigns"));
+
+    var reloadedCampaign = campaignRepository.findById(campaign.getId());
+    assertThat(reloadedCampaign)
+        .isPresent()
+        .hasValueSatisfying(rc -> assertThat(rc.getName()).isEqualTo("New Campaign Name"));
   }
 }
