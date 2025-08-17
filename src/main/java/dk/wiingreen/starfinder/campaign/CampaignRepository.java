@@ -10,4 +10,6 @@ public interface CampaignRepository extends CrudRepository<Campaign, UUID> {
   Optional<Campaign> findByIdAndOwner(UUID id, User owner);
 
   List<Campaign> findAllByOwner(User owner);
+
+  void deleteByIdAndOwner(UUID id, User owner);
 }

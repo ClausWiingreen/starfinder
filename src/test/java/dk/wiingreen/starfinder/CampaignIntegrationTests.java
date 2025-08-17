@@ -139,7 +139,7 @@ public class CampaignIntegrationTests {
   @Test
   @WithMockUser("intruder")
   void userCannotDeleteOthersCampaign() throws Exception {
-    var owner = userRepository.save(new User("intruder", null));
+    var owner = userRepository.save(new User("owner", null));
     userRepository.save(new User("intruder", null));
 
     var campaign = campaignRepository.save(new Campaign("Protected Campaign", owner));
