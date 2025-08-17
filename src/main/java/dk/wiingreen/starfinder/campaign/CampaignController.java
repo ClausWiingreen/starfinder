@@ -74,4 +74,9 @@ class CampaignController {
       BindingResult bindingResult) {
     return "/campaigns/edit";
   }
+
+  @PostMapping("/{id}/delete")
+  String deleteCampaign(@PathVariable UUID id) {
+    return "redirect:/campaigns";
+  }
 }
