@@ -135,4 +135,21 @@ public class CampaignIntegrationTests {
     var reloadedCampaign = campaignRepository.findById(campaign.getId());
     assertThat(reloadedCampaign).isEmpty();
   }
+
+  @Test
+  @WithMockUser("intruder")
+  void userCannotDeleteOthersCampaign() throws Exception {
+    var owner = userRepository.save(new User("intruder", null));
+    userRepository.save(new User("intruder", null));
+
+    var campaign = campaignRepository.save(new Campaign("Protected Campaign", owner));
+
+    mockMvc
+        .perform(post("/campaigns/{id}/delete", campaign.getId()).with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/campaigns"));
+
+    var reloadedCampaign = campaignRepository.findById(campaign.getId());
+    assertThat(reloadedCampaign).isPresent();
+  }
 }
