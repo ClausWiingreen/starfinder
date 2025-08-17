@@ -124,10 +124,15 @@ public class CampaignIntegrationTests {
   @Test
   @WithMockUser("owner")
   void userCanDeleteOwnCampaign() throws Exception {
-    var campaign = campaignRepository.save(new Campaign("Disposable Campaign", null));
+    var owner = userRepository.save(new User("owner", null));
+    var campaign = campaignRepository.save(new Campaign("Disposable Campaign", owner));
 
     mockMvc
         .perform(post("/campaigns/{id}/delete", campaign.getId()).with(csrf()))
-        .andExpect(status().is3xxRedirection());
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/campaigns"));
+
+    var reloadedCampaign = campaignRepository.findById(campaign.getId());
+    assertThat(reloadedCampaign).isEmpty();
   }
 }
