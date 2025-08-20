@@ -76,7 +76,7 @@ public class CampaignIntegrationTests {
 
     mockMvc
         .perform(get("/campaigns/%s".formatted(campaign.getId())))
-        .andExpect(status().isOk())
+        .andExpect(status().isNotFound())
         .andExpect(view().name("/error"))
         .andExpect(model().attribute("status", 404));
   }
@@ -187,7 +187,7 @@ public class CampaignIntegrationTests {
     mockMvc
         .perform(
             post("/campaigns/{id}", campaign.getId()).param("name", "Hacked Name").with(csrf()))
-        .andExpect(status().isOk())
+        .andExpect(status().isNotFound())
         .andExpect(model().attribute("status", 404))
         .andExpect(model().attribute("error", "Campaign not found"))
         .andExpect(

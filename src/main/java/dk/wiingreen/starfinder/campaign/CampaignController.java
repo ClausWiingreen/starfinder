@@ -4,14 +4,17 @@ import dk.wiingreen.starfinder.auth.CurrentUserService;
 import dk.wiingreen.starfinder.auth.User;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping(CampaignController.CAMPAIGN_PATH)
@@ -28,13 +31,18 @@ class CampaignController {
     this.currentUserService = currentUserService;
   }
 
-  private static Supplier<String> campaignNotFound(UUID id, Model model) {
-    return () -> {
-      model.addAttribute("status", 404);
-      model.addAttribute("error", "Campaign not found");
-      model.addAttribute("message", "Failed to find campaign with id %s".formatted(id));
-      return "/error";
-    };
+  private static Supplier<ModelAndView> campaignNotFound(UUID id) {
+    return () ->
+        new ModelAndView(
+            "/error",
+            Map.of(
+                "status",
+                404,
+                "error",
+                "Campaign not found",
+                "message",
+                "Failed to find campaign with id %s".formatted(id)),
+            HttpStatusCode.valueOf(404));
   }
 
   @GetMapping
@@ -63,28 +71,29 @@ class CampaignController {
   }
 
   @GetMapping("/{id}")
-  String getCampaign(@PathVariable UUID id, Model model) {
+  ModelAndView getCampaign(@PathVariable UUID id, Model model) {
     var user = currentUserService.getCurrentUserOrThrow();
     return campaignRepository
         .findByIdAndOwner(id, user)
         .map(
-            campaign -> {
-              model.addAttribute(
-                  "campaignEditRequest", new CampaignEditRequest(campaign.getName()));
-              model.addAttribute("id", campaign.getId());
-              return "/campaigns/edit";
-            })
-        .orElseGet(campaignNotFound(id, model));
+            campaign ->
+                new ModelAndView(
+                    "/campaigns/edit",
+                    Map.of(
+                        "campaignEditRequest",
+                        new CampaignEditRequest(campaign.getName()),
+                        "id",
+                        campaign.getId())))
+        .orElseGet(campaignNotFound(id));
   }
 
   @PostMapping("/{id}")
-  String editCampaign(
+  ModelAndView editCampaign(
       @PathVariable UUID id,
       @Valid @ModelAttribute CampaignEditRequest campaignEditRequest,
-      BindingResult bindingResult,
-      Model model) {
+      BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
-      return "/campaigns/edit";
+      return new ModelAndView("/campaigns/edit");
     }
     var user = currentUserService.getCurrentUserOrThrow();
     return campaignRepository
@@ -100,9 +109,9 @@ class CampaignController {
                 campaign.setName(campaignEditRequest.name());
               }
               campaignRepository.save(campaign);
-              return "redirect:/campaigns";
+              return new ModelAndView("redirect:/campaigns");
             })
-        .orElseGet(campaignNotFound(id, model));
+        .orElseGet(campaignNotFound(id));
   }
 
   @PostMapping("/{id}/delete")
