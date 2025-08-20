@@ -157,6 +157,38 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <version>1.20.1</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.pitest</groupId>
+                                <artifactId>pitest-junit5-plugin</artifactId>
+                                <version>1.2.3</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <id>pitest</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>mutationCoverage</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <targetClasses>
+                                <param>dk.wiingreen.starfinder.*</param>
+                            </targetClasses>
+                            <withHistory>true</withHistory>
+                            <timestampedReports>false</timestampedReports>
+                            <features>
+                                <feature>+auto_threads</feature>
+                            </features>
+                            <mutationThreshold>75</mutationThreshold>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
