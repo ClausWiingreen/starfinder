@@ -12,6 +12,7 @@ import dk.wiingreen.starfinder.campaign.Campaign;
 import dk.wiingreen.starfinder.campaign.CampaignRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
@@ -200,5 +201,18 @@ public class CampaignIntegrationTests {
     assertThat(reloadedCampaign)
         .isPresent()
         .hasValueSatisfying(campaignNameMatching("Owner Campaign"));
+  }
+
+  @Test
+  @WithMockUser(username = "owner")
+  void deleteRedirectsEvenIfCampaignDoesNotExist() throws Exception {
+    userRepository.save(new User("owner", null));
+
+    UUID missingId = UUID.fromString("cf08c50e-0622-4903-a261-7be444e71e2c");
+
+    mockMvc
+        .perform(post("/campaigns/{id}/delete", missingId).with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/campaigns"));
   }
 }
