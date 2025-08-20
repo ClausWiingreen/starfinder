@@ -1,6 +1,7 @@
 package dk.wiingreen.starfinder.auth;
 
 import jakarta.validation.Valid;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,9 +25,14 @@ class AuthController {
     this.passwordEncoder = passwordEncoder;
   }
 
+  @GetMapping("/login")
+  String getLoginForm() {
+    return "/auth/login";
+  }
+
   @GetMapping("/register")
   String getRegisterUserForm(Model model) {
-    model.addAttribute("registerUserRequest", new RegisterUserRequest("", ""));
+    model.addAttribute("registerUserRequest", new RegisterUserRequest("", "", ""));
     return "/auth/register";
   }
 
@@ -37,17 +43,22 @@ class AuthController {
       return "/auth/register";
     }
 
-    log.info("Registering user <{}>", registerUserRequest.username());
+    if (!Objects.equals(registerUserRequest.password(), registerUserRequest.repeatPassword())) {
+      bindingResult.rejectValue("password", "password.dontmatch", "The Password Does Not Match");
+      return "/auth/register";
+    }
 
     if (userRepository.existsByUsername(registerUserRequest.username())) {
       log.error("User already exists <{}>", registerUserRequest.username());
       bindingResult.rejectValue("username", "username.exists", "Username already exists");
       return "/auth/register";
     }
+    log.info("Registering user <{}>", registerUserRequest.username());
+
     userRepository.save(
         new User(
             registerUserRequest.username(),
             passwordEncoder.encode(registerUserRequest.password())));
-    return "redirect:/login";
+    return "redirect:/auth/login";
   }
 }

@@ -2,8 +2,9 @@
     background-color: var(--color-background);
     margin-block-end: var(--space-m);
     padding-inline: var(--space-m);
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    gap: var(--space-s);
+    grid-template-columns: 1fr auto auto;
     align-items: center;
     border-bottom: 1px solid var(--color-border);
     box-shadow: var(--shadow);

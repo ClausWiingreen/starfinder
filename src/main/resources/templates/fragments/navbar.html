@@ -1,23 +1,29 @@
 <header class="header" th:fragment="navbar">
-    <a th:href="@{/}" class="header__heading typography-headline">Starfinder</a>
-    <nav class="navbar">
-        <ul class="navbar__list">
-            <li class="navbar__item"
-                th:each="navigationItem: ${navigationItems}"
-                th:classappend="${navigationItem.active ? 'navbar__item--active' : ''}">
-                <a class="clickable-object typography-title"
-                   th:href="@{${navigationItem.url}}"
-                   th:text="${navigationItem.title}">Titel</a>
-            </li>
-        </ul>
-        <th:block th:if="${currentUser == null}">
-            <a th:href="@{/login}">Login</a>
-            <a th:href="@{/auth/register}">Register</a>
-        </th:block>
-        <th:block th:if="${currentUser != null}">
-            Logged in as
-            <th:block th:text="${currentUser.username}">User</th:block>
+    <div>
+        <a th:href="@{/}"
+           class="header__heading typography-headline">Starfinder</a>
+    </div>
+    <th:block th:if="${currentUser != null}">
+        <nav class="navbar">
+            <ul class="navbar__list">
+                <li class="navbar__item"
+                    th:each="navigationItem: ${navigationItems}"
+                    th:classappend="${navigationItem.active ? 'navbar__item--active' : ''}">
+                    <a class="clickable-object typography-title"
+                       th:href="@{${navigationItem.url}}"
+                       th:text="${navigationItem.title}">Titel</a>
+                </li>
+            </ul>
+        </nav>
+        <div style="display: flex; flex-direction: column; align-items: center">
+            <div th:text="|Logged in as ${currentUser.username}|">Logged in as
+                User
+            </div>
             <a th:href="@{/logout}">Logout</a>
-        </th:block>
-    </nav>
+        </div>
+    </th:block>
+    <div th:if="${currentUser == null}">
+        <a th:href="@{/login}">Login</a>
+        <a th:href="@{/auth/register}">Register</a>
+    </div>
 </header>

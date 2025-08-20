@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@Profile("test")
 public class UserIntegrationTests {
   private final UserRepository userRepository;
   private final MockMvc mockMvc;
@@ -38,9 +40,10 @@ public class UserIntegrationTests {
             post("/auth/register")
                 .param("username", "newuser")
                 .param("password", "securePass123")
+                .param("repeatPassword", "securePass123")
                 .with(csrf()))
         .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/login"));
+        .andExpect(redirectedUrl("/auth/login"));
 
     var maybeUser = userRepository.findByUsername("newuser");
     assertThat(maybeUser).hasValueSatisfying(matchesPassword("securePass123"));
@@ -55,6 +58,7 @@ public class UserIntegrationTests {
             post("/auth/register")
                 .param("username", "dupeuser")
                 .param("password", "newPassword123")
+                .param("repeatPassword", "newPassword123")
                 .with(csrf()))
         .andExpect(status().isOk())
         .andExpect(model().attributeHasFieldErrors("registerUserRequest", "username"))
@@ -71,12 +75,12 @@ public class UserIntegrationTests {
 
     mockMvc
         .perform(
-            post("/login")
+            post("/auth/login")
                 .param("username", "loginuser")
                 .param("password", "wrongPassword")
                 .with(csrf()))
         .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/login?error"));
+        .andExpect(redirectedUrl("/auth/login?error"));
   }
 
   @Test
@@ -98,12 +102,12 @@ public class UserIntegrationTests {
   void loginFailsForUnknownUser() throws Exception {
     mockMvc
         .perform(
-            post("/login")
+            post("/auth/login")
                 .param("username", "ghostuser")
                 .param("password", "anyPassword")
                 .with(csrf()))
         .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/login?error"));
+        .andExpect(redirectedUrl("/auth/login?error"));
   }
 
   @Test
@@ -128,7 +132,7 @@ public class UserIntegrationTests {
         mockMvc
             .perform(post("/logout").with(csrf()))
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/login?logout"))
+            .andExpect(redirectedUrl("/auth/login?logout"))
             .andReturn();
 
     var session = result.getRequest().getSession(false);
