@@ -215,4 +215,19 @@ public class CampaignIntegrationTests {
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl("/campaigns"));
   }
+
+  @Test
+  @WithMockUser(username = "owner")
+  void viewMissingCampaignShowsNotFoundPage() throws Exception {
+    userRepository.save(new User("owner", null));
+
+    UUID missingId = UUID.fromString("cf08c50e-0622-4903-a261-7be444e71e2d");
+
+    mockMvc
+        .perform(get("/campaigns/{id}", missingId))
+        .andExpect(status().isNotFound())
+        .andExpect(view().name("/error"))
+        .andExpect(model().attribute("status", 404))
+        .andExpect(model().attribute("error", "Campaign not found"));
+  }
 }
